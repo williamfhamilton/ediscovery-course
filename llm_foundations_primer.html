@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is a Foundation Model, Actually? — Week 1 Primer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f5f4f0;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; }
+
+  .top-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #888; margin-bottom: 6px;
+  }
+  .main-title { font-size: 30px; font-weight: 700; color: #111; line-height: 1.25; margin-bottom: 6px; }
+  .sub-title { font-size: 16px; color: #666; margin-bottom: 2rem; }
+
+  .standard-box {
+    background: #fff; border: 1px solid #dde8f5; border-left: 4px solid #2E75B6;
+    border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+  }
+  .standard-box .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    color: #2E75B6; margin-bottom: 6px;
+  }
+  .standard-box p { font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box p + p { margin-top: 8px; }
+
+  .standard-box.grey { border-left-color: #888; border-color: #e8e8e8; }
+  .standard-box.grey .label { color: #666; }
+
+  .stage-card {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
+    padding: 1.5rem; margin-bottom: 1.25rem;
+  }
+  .stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .stage-num {
+    width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0;
+    background: #dbeafe; color: #1d4ed8;
+  }
+  .stage-title-wrap { flex: 1; }
+  .stage-title { font-size: 18px; font-weight: 600; color: #111; }
+  .stage-meta { font-size: 12px; color: #999; margin-top: 1px; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; margin-bottom: 10px;
+  }
+  .tag-neutral { background: #f0f0f0; color: #555; }
+
+  .stage-body { font-size: 15px; color: #333; line-height: 1.7; margin-bottom: 1rem; }
+
+  .discuss-box {
+    background: #fffbf0; border: 1px solid #f0d080; border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; margin-top: 0.85rem;
+  }
+  .discuss-box .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    color: #a07000; margin-bottom: 5px;
+  }
+  .discuss-box .dtext { font-size: 14px; color: #4a3200; line-height: 1.6; }
+
+  .debrief-card {
+    background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.25rem 1.4rem;
+  }
+  .debrief-card .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    color: #888; margin-bottom: 10px;
+  }
+  .debrief-card ol { padding-left: 1.4rem; }
+  .debrief-card li { font-size: 14px; color: #333; line-height: 1.65; margin-bottom: 10px; }
+  .debrief-card li:last-child { margin-bottom: 0; }
+
+  /* ---- interactive elements ---- */
+  .sandbox {
+    background: #fafafa; border: 1px solid #e5e5e5; border-radius: 10px;
+    padding: 1.1rem 1.2rem; margin: 1rem 0;
+  }
+  .sandbox label { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sandbox input[type=text] {
+    width: 100%; margin-top: 8px; padding: 10px 12px; font-size: 15px;
+    border: 1.5px solid #ccc; border-radius: 8px; font-family: inherit;
+  }
+  .sandbox-btn {
+    margin-top: 10px; padding: 9px 18px; font-size: 14px; font-weight: 600;
+    background: #2E75B6; color: #fff; border: none; border-radius: 8px; cursor: pointer;
+  }
+  .sandbox-btn:hover { background: #1a5a9a; }
+  .sandbox-btn.secondary { background: #fff; color: #2E75B6; border: 1.5px solid #2E75B6; }
+  .sandbox-btn.secondary:hover { background: #eef4fb; }
+
+  .token-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .token-chip {
+    display: inline-flex; flex-direction: column; align-items: center;
+    padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    background: #eef4fb; color: #1a3a5c; border: 1px solid #cfe0f2;
+  }
+  .token-chip.split { background: #fef3e2; color: #7c5a00; border-color: #f0d080; }
+  .token-chip .tid { font-size: 10px; font-weight: 500; color: #999; margin-top: 2px; }
+
+  .vec-preview {
+    margin-top: 14px; font-size: 12.5px; color: #555; background: #fff; border: 1px solid #eee;
+    border-radius: 6px; padding: 10px 12px; font-family: "SF Mono", Consolas, monospace;
+    overflow-x: auto;
+  }
+
+  svg text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+  .embed-svg-wrap { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 10px; margin-top: 10px; }
+  .embed-node { cursor: pointer; }
+  .embed-node circle { transition: r 0.15s, fill 0.15s; }
+  .embed-node text { font-size: 12px; fill: #333; pointer-events: none; }
+  .embed-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12.5px; color: #555; }
+  .embed-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  .neighbor-readout {
+    margin-top: 12px; font-size: 13.5px; color: #333; background: #fff8ec;
+    border: 1px solid #f0d080; border-radius: 8px; padding: 10px 12px; min-height: 20px;
+  }
+  .neighbor-readout b { color: #6b4400; }
+
+  .predict-stem {
+    font-size: 16px; background: #fff; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 12px 14px; margin-top: 10px; line-height: 1.6;
+  }
+  .predict-stem .fixed { color: #111; }
+  .predict-stem .chosen { color: #166534; font-weight: 600; }
+
+  .candidate-row {
+    display: flex; align-items: center; gap: 10px; margin-top: 8px; cursor: pointer;
+    padding: 6px 8px; border-radius: 6px;
+  }
+  .candidate-row:hover { background: #f5f5f5; }
+  .candidate-word { width: 110px; flex-shrink: 0; font-size: 13.5px; font-weight: 600; color: #1a3a5c; }
+  .candidate-bar-wrap { flex: 1; background: #eee; border-radius: 4px; height: 16px; overflow: hidden; }
+  .candidate-bar { height: 100%; background: #2E75B6; }
+  .candidate-pct { width: 46px; text-align: right; font-size: 12.5px; color: #555; flex-shrink: 0; }
+
+  .reset-btn {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 14px;
+    font-size: 12.5px; font-weight: 600; background: #fff; color: #555; border: 1.5px solid #ccc;
+    border-radius: 8px; cursor: pointer;
+  }
+  .reset-btn:hover { background: #f0f0f0; }
+
+  .no-data-note { font-size: 13px; color: #888; font-style: italic; margin-top: 8px; }
+
+  hr.divider { border: none; border-top: 1px solid #ddd; margin: 1.5rem 0; }
+
+  @media (max-width: 600px) {
+    .main-title { font-size: 22px; }
+    .candidate-word { width: 78px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-label">Electronic Discovery — Week 1: Foundations</div>
+  <div class="main-title">What is a large language model, actually?</div>
+  <div class="sub-title">Three hands-on stages. No lecture — you'll build the intuition yourself.</div>
+
+  <div class="standard-box">
+    <div class="label">The claim this session tests</div>
+    <p>A foundation large language model is not a database, and it does not "know" or "understand" facts the way a person does. At its core, it is a trained mathematical function that (1) breaks text into small pieces called <em>tokens</em>, (2) represents each token as a list of numbers &mdash; a <em>vector</em> &mdash; positioned in a high-dimensional space so that similar tokens sit near each other, and (3) repeatedly predicts the single most statistically likely next token given everything that came before, one token at a time.</p>
+    <p>Everything a model generates &mdash; a case summary, a discovery response, a contract clause &mdash; is the output of that prediction loop running thousands of times. Nothing more is retrieved from an internal filing cabinet of "known facts."</p>
+  </div>
+
+  <div class="standard-box grey">
+    <div class="label">Why an e-discovery class needs this</div>
+    <p>You will soon be evaluating whether a client's use of generative AI tools is a discoverable data source, whether an AI-drafted document is authentic, and why a model can confidently state something false. Every one of those questions turns on understanding that outputs are statistically generated, not retrieved. This primer builds the mechanical intuition before we return to those doctrinal questions in Module 2A.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ================= STAGE 1: TOKENIZATION ================= -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-num">1</div>
+      <div class="stage-title-wrap">
+        <div class="stage-title">Text is not read as words &mdash; it's chopped into chunks</div>
+        <div class="stage-meta">Tokenization</div>
+      </div>
+    </div>
+    <span class="tag tag-neutral">Try it yourself</span>
+    <div class="stage-body">
+      A model never sees a sentence the way you do. Before anything else happens, text is split into <strong>tokens</strong> &mdash; sometimes a whole common word, sometimes just a fragment of a rarer or longer word. Long or unusual words get carved into sub-word chunks that the model has seen often across its training data, even if those chunks aren't meaningful units to a human reader.
+    </div>
+
+    <div class="sandbox">
+      <label>Type a sentence &mdash; try a long or unusual word like "spoliation" or "discoverability"</label>
+      <input type="text" id="tok-input" value="Palmetto Ridge failed to preserve responsive ESI after the duty to preserve was triggered.">
+      <div>
+        <button class="sandbox-btn" onclick="runTokenize()">Tokenize it</button>
+      </div>
+      <div class="token-row" id="token-output"></div>
+      <div class="vec-preview" id="vec-preview" style="display:none;"></div>
+    </div>
+
+    <div class="discuss-box">
+      <div class="dlabel">💬 Group discussion</div>
+      <div class="dtext">Notice which words got split into orange chunks. Why would a model builder want to break rare words into smaller, more common pieces rather than treating every whole word as its own unit? What happens when the model encounters a word it has literally never seen before, split or not?</div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 2: EMBEDDINGS ================= -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-num">2</div>
+      <div class="stage-title-wrap">
+        <div class="stage-title">Every token becomes a point in space</div>
+        <div class="stage-meta">Embeddings</div>
+      </div>
+    </div>
+    <span class="tag tag-neutral">Click any word</span>
+    <div class="stage-body">
+      Each token is converted into a vector &mdash; a long list of numbers &mdash; that places it at a specific point in a high-dimensional space. Real models use hundreds or thousands of dimensions; below is a toy 2-dimensional version so you can literally see the pattern: <strong>words that tend to appear in similar contexts end up positioned near each other</strong>. That spatial closeness is the entire mechanism the model uses to represent "meaning."
+    </div>
+
+    <div class="sandbox">
+      <label>Click a word to see its nearest neighbors in the space</label>
+      <div class="embed-svg-wrap">
+        <svg id="embed-svg" viewBox="0 0 620 380" width="100%" style="max-width:620px; display:block; margin:0 auto;"></svg>
+      </div>
+      <div class="embed-legend" id="embed-legend"></div>
+      <div class="neighbor-readout" id="neighbor-readout">Click any labeled point above.</div>
+    </div>
+
+    <div class="discuss-box">
+      <div class="dlabel">💬 Group discussion</div>
+      <div class="dtext">Click "litigation" and then click "wolf." Why do their nearest neighbors look so different? Now consider: nobody hand-labeled these clusters as "legal terms" or "animals" &mdash; the positions emerge purely from statistical patterns of what appears near what in enormous amounts of text. What are the implications if two very different concepts happen to be used in similar surrounding language?</div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 3: NEXT-TOKEN PREDICTION ================= -->
+  <div class="stage-card">
+    <div class="stage-header">
+      <div class="stage-num">3</div>
+      <div class="stage-title-wrap">
+        <div class="stage-title">Generation is just: predict the next chunk, one at a time</div>
+        <div class="stage-meta">Next-token prediction</div>
+      </div>
+    </div>
+    <span class="tag tag-neutral">Build a sentence by clicking</span>
+    <div class="stage-body">
+      Once text is tokenized and each token has a vector, the model's entire job at generation time is to look at everything so far and output a <strong>probability distribution</strong> over what token is likely to come next &mdash; then pick one (usually the highest-probability option, sometimes a close second for variety) and repeat. Below is a toy version built from a small training set of sentences, so the probabilities are simplistic &mdash; but the mechanism is the real one, just scaled down from billions of examples to a few dozen.
+    </div>
+
+    <div class="sandbox">
+      <label>Click a candidate to append it, then watch the next set of odds appear</label>
+      <div class="predict-stem" id="predict-stem"></div>
+      <div id="candidates"></div>
+      <div class="no-data-note" id="no-data-note" style="display:none;">This exact chunk never appeared in the toy training set, so there's no data to predict from &mdash; a real model doesn't hit a dead end here because its vectors let it generalize to combinations it never saw verbatim. That generalization is also exactly how it can confidently generate a plausible-sounding but false statement.</div>
+      <button class="reset-btn" onclick="resetPredict()">↺ Restart the sentence</button>
+    </div>
+
+    <div class="discuss-box">
+      <div class="dlabel">💬 Group discussion</div>
+      <div class="dtext">At each step, the model isn't "deciding" the fact is true &mdash; it's reporting which chunk is statistically likeliest to come next given the training data's patterns. Where in that loop would a hallucinated case citation or a fabricated Bates number come from? Does anything in this mechanism check the output against ground truth before it's produced?</div>
+    </div>
+  </div>
+
+  <div class="stage-card">
+    <div class="debrief-card">
+      <div class="dlabel">Bring to Module 2A</div>
+      <ol>
+        <li>If an AI tool's output is just a probability-driven completion, what does that mean for authenticating an AI-generated document under FRE 901?</li>
+        <li>Custodian scoping now has to reach prompts and outputs stored by AI tools. Given what you just saw, what would you actually ask a custodian to search for or preserve &mdash; the prompt, the output, both, and where do those live?</li>
+        <li>Opposing counsel produces a memo they say a partner "wrote." How, if at all, would you investigate whether it was substantially AI-generated, and why might that matter to your case?</li>
+        <li>Does anything about this mechanism change how skeptical you should be of a confident-sounding AI-generated summary of a document set in this course going forward?</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   STAGE 1 — TOKENIZATION
+   ============================================================ */
+const SUBWORD_MAP = {
+  "spoliation": ["spoli", "ation"],
+  "discoverability": ["discover", "abil", "ity"],
+  "custodian": ["custod", "ian"],
+  "preservation": ["preserv", "ation"],
+  "responsive": ["respon", "sive"],
+  "electronically": ["electronic", "ally"],
+  "interoperability": ["inter", "operab", "ility"],
+  "anticipation": ["anticip", "ation"],
+  "hallucination": ["hallucin", "ation"],
+  "tokenization": ["token", "ization"],
+  "metadata": ["meta", "data"],
+  "reasonably": ["reason", "ably"],
+  "unforeseeable": ["un", "foresee", "able"]
+};
+
+function runTokenize() {
+  const raw = document.getElementById('tok-input').value;
+  const words = raw
+    .replace(/([.,;:!?])/g, ' $1 ')
+    .split(/\s+/)
+    .filter(w => w.length > 0);
+
+  const out = document.getElementById('token-output');
+  out.innerHTML = '';
+  let idCounter = 1;
+  const vecLines = [];
+
+  words.forEach(wRaw => {
+    const clean = wRaw.toLowerCase().replace(/[.,;:!?]/g, '');
+    const punct = wRaw.match(/[.,;:!?]/) ? wRaw.match(/[.,;:!?]/)[0] : null;
+
+    if (SUBWORD_MAP[clean]) {
+      SUBWORD_MAP[clean].forEach(piece => {
+        const chip = document.createElement('div');
+        chip.className = 'token-chip split';
+        chip.innerHTML = piece + '<span class="tid">#' + (idCounter++) + '</span>';
+        out.appendChild(chip);
+        vecLines.push(piece + '  →  [' + toyVector(piece).join(', ') + ']');
+      });
+    } else if (clean.length > 0) {
+      const chip = document.createElement('div');
+      chip.className = 'token-chip';
+      chip.innerHTML = clean + '<span class="tid">#' + (idCounter++) + '</span>';
+      out.appendChild(chip);
+      vecLines.push(clean + '  →  [' + toyVector(clean).join(', ') + ']');
+    }
+
+    if (punct) {
+      const chip = document.createElement('div');
+      chip.className = 'token-chip';
+      chip.innerHTML = punct + '<span class="tid">#' + (idCounter++) + '</span>';
+      out.appendChild(chip);
+      vecLines.push(punct + '  →  [' + toyVector(punct).join(', ') + ']');
+    }
+  });
+
+  const prev = document.getElementById('vec-preview');
+  prev.style.display = 'block';
+  prev.innerHTML = '<strong>Illustrative only</strong> — real vectors run hundreds/thousands of dimensions; showing 4 here:<br><br>' + vecLines.join('<br>');
+}
+
+function toyVector(token) {
+  // deterministic pseudo-vector for illustration purposes only
+  let h = 0;
+  for (let i = 0; i < token.length; i++) h = (h * 31 + token.charCodeAt(i)) >>> 0;
+  const out = [];
+  for (let i = 0; i < 4; i++) {
+    h = (h * 1103515245 + 12345) >>> 0;
+    out.push((((h % 2000) / 1000) - 1).toFixed(2));
+  }
+  return out;
+}
+
+/* ============================================================
+   STAGE 2 — EMBEDDING SPACE
+   ============================================================ */
+const EMBED_POINTS = {
+  // legal cluster (blue)
+  "litigation":   {x: 130, y: 90,  group: "legal"},
+  "lawsuit":      {x: 165, y: 60,  group: "legal"},
+  "complaint":    {x: 95,  y: 55,  group: "legal"},
+  "discovery":    {x: 100, y: 120, group: "legal"},
+  "evidence":     {x: 150, y: 135, group: "legal"},
+  "custodian":    {x: 190, y: 105, group: "legal"},
+
+  // animals cluster (green)
+  "wolf":   {x: 470, y: 260, group: "animal"},
+  "dog":    {x: 500, y: 225, group: "animal"},
+  "cat":    {x: 445, y: 220, group: "animal"},
+  "bird":   {x: 520, y: 290, group: "animal"},
+  "horse":  {x: 460, y: 300, group: "animal"},
+
+  // emotions cluster (purple)
+  "happy":   {x: 260, y: 300, group: "emotion"},
+  "joyful":  {x: 230, y: 275, group: "emotion"},
+  "sad":     {x: 300, y: 330, group: "emotion"},
+  "angry":   {x: 250, y: 345, group: "emotion"},
+  "anxious": {x: 300, y: 285, group: "emotion"},
+
+  // colors cluster (orange)
+  "red":    {x: 400, y: 70,  group: "color"},
+  "blue":   {x: 435, y: 95,  group: "color"},
+  "green":  {x: 400, y: 110, group: "color"},
+  "yellow": {x: 440, y: 55,  group: "color"}
+};
+
+const GROUP_COLORS = {
+  legal:   "#2E75B6",
+  animal:  "#3f9142",
+  emotion: "#7c3aed",
+  color:   "#d4a017"
+};
+
+function renderEmbedSpace() {
+  const svg = document.getElementById('embed-svg');
+  svg.innerHTML = '';
+  const ns = "http://www.w3.org/2000/svg";
+
+  Object.entries(EMBED_POINTS).forEach(([word, p]) => {
+    const g = document.createElementNS(ns, "g");
+    g.setAttribute("class", "embed-node");
+    g.setAttribute("id", "node-" + word);
+    g.onclick = () => selectWord(word);
+
+    const circle = document.createElementNS(ns, "circle");
+    circle.setAttribute("cx", p.x);
+    circle.setAttribute("cy", p.y);
+    circle.setAttribute("r", 6);
+    circle.setAttribute("fill", GROUP_COLORS[p.group]);
+    g.appendChild(circle);
+
+    const text = document.createElementNS(ns, "text");
+    text.setAttribute("x", p.x + 10);
+    text.setAttribute("y", p.y + 4);
+    text.textContent = word;
+    g.appendChild(text);
+
+    svg.appendChild(g);
+  });
+
+  const legend = document.getElementById('embed-legend');
+  legend.innerHTML = Object.entries(GROUP_COLORS).map(([g, c]) =>
+    `<span><span class="swatch" style="background:${c}"></span>${g}</span>`
+  ).join('');
+}
+
+let selectedWord = null;
+let neighborLines = [];
+
+function selectWord(word) {
+  selectedWord = word;
+  const svg = document.getElementById('embed-svg');
+  const ns = "http://www.w3.org/2000/svg";
+
+  // clear previous highlight state
+  Object.keys(EMBED_POINTS).forEach(w => {
+    const node = document.getElementById('node-' + w);
+    const circle = node.querySelector('circle');
+    circle.setAttribute("r", 6);
+    circle.setAttribute("stroke", "none");
+  });
+  neighborLines.forEach(l => l.remove());
+  neighborLines = [];
+
+  const origin = EMBED_POINTS[word];
+  const dists = Object.entries(EMBED_POINTS)
+    .filter(([w]) => w !== word)
+    .map(([w, p]) => ({
+      w, d: Math.sqrt((p.x - origin.x) ** 2 + (p.y - origin.y) ** 2)
+    }))
+    .sort((a, b) => a.d - b.d);
+
+  const top3 = dists.slice(0, 3);
+
+  const selfNode = document.getElementById('node-' + word);
+  selfNode.querySelector('circle').setAttribute("r", 9);
+  selfNode.querySelector('circle').setAttribute("stroke", "#111");
+  selfNode.querySelector('circle').setAttribute("stroke-width", "2");
+
+  top3.forEach(n => {
+    const p2 = EMBED_POINTS[n.w];
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", origin.x);
+    line.setAttribute("y1", origin.y);
+    line.setAttribute("x2", p2.x);
+    line.setAttribute("y2", p2.y);
+    line.setAttribute("stroke", "#999");
+    line.setAttribute("stroke-dasharray", "3,3");
+    line.setAttribute("stroke-width", "1.2");
+    svg.insertBefore(line, svg.firstChild);
+    neighborLines.push(line);
+  });
+
+  const readout = document.getElementById('neighbor-readout');
+  readout.innerHTML = `<b>${word}</b>'s three nearest neighbors: ` +
+    top3.map(n => `${n.w} (distance ${n.d.toFixed(0)})`).join(', ') +
+    `. Notice they all belong to the same rough category — that clustering is what "the model understands this word's meaning" actually reduces to: proximity in vector space.`;
+}
+
+/* ============================================================
+   STAGE 3 — NEXT-TOKEN PREDICTION (toy bigram model)
+   ============================================================ */
+const CORPUS = `
+the plaintiff filed a lawsuit against the company .
+the plaintiff's attorney requested the personnel file .
+the plaintiff's attorney requested all performance reviews .
+the plaintiff's attorney requested a litigation hold memo .
+the company received a demand letter from counsel .
+the company issued a litigation hold to all custodians .
+the company failed to preserve responsive documents .
+the custodian searched the email account for records .
+the custodian searched the slack workspace for messages .
+the custodian searched the shared drive for files .
+counsel reviewed the documents for privilege .
+counsel reviewed the emails for relevance .
+counsel produced the documents to opposing counsel .
+opposing counsel moved for sanctions under rule 37 .
+the court found that the duty to preserve had triggered .
+the court granted an adverse inference instruction .
+the model predicts the most likely next word .
+the model generates text one token at a time .
+the model does not retrieve facts from memory .
+the model represents each token as a vector .
+a vector places the token in a high dimensional space .
+similar words end up close together in that space .
+the training data shapes the probability distribution .
+the probability distribution determines the next token .
+a hallucination occurs when the model predicts a plausible but false statement .
+the attorney reviewed the ai generated summary carefully .
+the attorney flagged the ai generated summary for errors .
+the witness testified about the promotion decision .
+the witness testified about the performance review .
+the manager deleted the slack messages after the letter arrived .
+the manager altered the performance review without documentation .
+the ediscovery team collected data from the cloud platform .
+the ediscovery team collected data from personal devices .
+the ediscovery team collected data from the messaging app .
+the judge ordered the parties to meet and confer .
+the parties negotiated the esi protocol before the conference .
+the parties negotiated the scope of custodians .
+the company disclosed its use of generative ai tools .
+the company disclosed its use of the enterprise chatbot .
+students learned that tokens are chunks of text .
+students learned that embeddings capture similarity .
+students learned that generation is repeated prediction .
+`.trim();
+
+function buildBigrams(corpus) {
+  const sentences = corpus.split('\n').map(s => s.trim()).filter(Boolean);
+  const bigrams = {};
+  sentences.forEach(sentence => {
+    const words = sentence.replace(/([.])/g, ' $1').split(/\s+/).filter(Boolean);
+    for (let i = 0; i < words.length - 1; i++) {
+      const w1 = words[i].toLowerCase();
+      const w2 = words[i + 1].toLowerCase();
+      if (!bigrams[w1]) bigrams[w1] = {};
+      bigrams[w1][w2] = (bigrams[w1][w2] || 0) + 1;
+    }
+  });
+  return bigrams;
+}
+
+const BIGRAMS = buildBigrams(CORPUS);
+
+let predictFixed = "the plaintiff's attorney requested";
+let predictChosen = [];
+
+function currentLastWord() {
+  const all = predictFixed.split(/\s+/).concat(predictChosen);
+  return all[all.length - 1].toLowerCase().replace(/[.]/g, '');
+}
+
+function renderPredict() {
+  const stemEl = document.getElementById('predict-stem');
+  stemEl.innerHTML = `<span class="fixed">${predictFixed}</span>` +
+    (predictChosen.length ? ' <span class="chosen">' + predictChosen.join(' ') + '</span>' : '');
+
+  const last = currentLastWord();
+  const options = BIGRAMS[last];
+  const candContainer = document.getElementById('candidates');
+  const noData = document.getElementById('no-data-note');
+  candContainer.innerHTML = '';
+
+  if (!options) {
+    noData.style.display = 'block';
+    return;
+  }
+  noData.style.display = 'none';
+
+  const total = Object.values(options).reduce((a, b) => a + b, 0);
+  const sorted = Object.entries(options).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  sorted.forEach(([word, count]) => {
+    const pct = Math.round((count / total) * 100);
+    const row = document.createElement('div');
+    row.className = 'candidate-row';
+    row.onclick = () => chooseWord(word);
+    row.innerHTML = `
+      <div class="candidate-word">${word}</div>
+      <div class="candidate-bar-wrap"><div class="candidate-bar" style="width:${pct}%"></div></div>
+      <div class="candidate-pct">${pct}%</div>
+    `;
+    candContainer.appendChild(row);
+  });
+}
+
+function chooseWord(word) {
+  predictChosen.push(word);
+  renderPredict();
+}
+
+function resetPredict() {
+  predictChosen = [];
+  renderPredict();
+}
+
+/* init */
+renderEmbedSpace();
+renderPredict();
+runTokenize();
+</script>
+</body>
+</html>
