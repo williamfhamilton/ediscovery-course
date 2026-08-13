@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sabal Point Facilities Group — Document Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #2E75B6;
+    --blue-dark: #1a5a9a;
+    --ink: #1a1a1a;
+    --bg: #f5f4f0;
+    --card: #fff;
+    --line: #e0e0e0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  /* ============ SCREEN 1: TRIGGER ============ */
+  #trigger-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .trigger-wrap { max-width: 640px; width: 100%; }
+
+  .trigger-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .trigger-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .hotline-card {
+    background: #fffaf0;
+    border: 1px solid #f0d080;
+    border-left: 5px solid #d4a017;
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hotline-meta {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #a07000;
+    margin-bottom: 4px;
+  }
+
+  .hotline-sub {
+    font-size: 12.5px;
+    color: #8a6800;
+    margin-bottom: 14px;
+  }
+
+  .hotline-quote {
+    font-size: 15.5px;
+    font-style: italic;
+    color: #4a3200;
+    line-height: 1.7;
+  }
+
+  .gc-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--blue);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .gc-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+
+  .gc-text { font-size: 14.5px; color: #222; line-height: 1.7; }
+  .gc-text + .gc-text { margin-top: 8px; }
+
+  .begin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .begin-btn:hover { background: var(--blue-dark); }
+  .begin-btn:active { transform: scale(0.98); }
+
+  .trigger-note {
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: #888;
+  }
+
+  /* ============ SCREEN 2: REVIEW WORKSPACE ============ */
+  #review-screen { display: none; min-height: 100vh; }
+
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar-title { font-size: 15px; font-weight: 700; color: #111; white-space: nowrap; }
+  .topbar-title span { font-weight: 400; color: #888; font-size: 12.5px; }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+  }
+
+  #search-input {
+    width: 100%;
+    padding: 9px 14px 9px 36px;
+    font-size: 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-family: inherit;
+  }
+  #search-input:focus { outline: none; border-color: var(--blue); background: #fff; }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  #search-count {
+    font-size: 12.5px;
+    color: #777;
+    white-space: nowrap;
+  }
+
+  .reveal-toggle-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+    color: #7c3aed;
+    border: 1.5px solid #d8c8fb;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .reveal-toggle-btn:hover { background: #f7f3ff; }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 62px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: #fff;
+    border-right: 1px solid var(--line);
+    padding: 1rem 0.75rem 2rem;
+    overflow-y: auto;
+  }
+
+  .custodian-group { margin-bottom: 1.1rem; }
+
+  .custodian-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    background: #f4f4f4;
+    margin-bottom: 4px;
+  }
+
+  .custodian-avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .custodian-role { font-weight: 400; color: #888; font-size: 11px; }
+
+  .doc-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px 8px 40px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    transition: background 0.12s;
+  }
+  .doc-item:hover { background: #f0f4fa; }
+  .doc-item.active { background: #dbeafe; }
+  .doc-item.dimmed { opacity: 0.3; }
+
+  .doc-item-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+
+  .doc-type-tag {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .tag-email { background: #dbeafe; color: #1d4ed8; }
+  .tag-invoice { background: #fef3c7; color: #92400e; }
+  .tag-sheet { background: #dcfce7; color: #166534; }
+  .tag-pdf { background: #ede9fe; color: #5b21b6; }
+
+  .doc-item-title { font-size: 12.5px; font-weight: 600; color: #222; }
+  .doc-item-meta { font-size: 11px; color: #999; padding-left: 0; }
+
+  /* MAIN PANE */
+  .main-pane {
+    padding: 1.75rem 2rem 3rem;
+    overflow-y: auto;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: #999;
+    text-align: center;
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+  .doc-view {
+    max-width: 720px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+  }
+
+  .doc-view-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .doc-bates {
+    font-size: 12px;
+    color: #999;
+    font-family: "SF Mono", Consolas, monospace;
+    margin-bottom: 1.1rem;
+  }
+
+  /* Email styling */
+  .email-header {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 1.1rem;
+  }
+  .email-header .row { display: flex; gap: 8px; margin-bottom: 3px; }
+  .email-header .row:last-child { margin-bottom: 0; }
+  .email-header .field { font-weight: 700; color: #777; min-width: 52px; }
+  .email-thread-divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 1.4rem 0 1.1rem;
+  }
+  .email-body p { margin-bottom: 0.9rem; font-size: 14.5px; }
+
+  /* Invoice styling */
+  .invoice-meta-row { font-size: 14px; margin-bottom: 4px; color: #333; }
+  table.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 13.5px;
+  }
+  table.doc-table th {
+    background: #f0f0f0;
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+  }
+  table.doc-table td {
+    padding: 8px 10px;
+    border-top: 1px solid #eee;
+  }
+  table.doc-table tr.total-row td { font-weight: 700; background: #f8f8f8; }
+  table.doc-table tr.flag-row td { background: #fef2f2; }
+  .amount-cell { text-align: right; }
+  .invoice-note { font-size: 12.5px; color: #777; font-style: italic; margin-top: 10px; }
+
+  /* PDF/ticket styling */
+  .ticket-field { display: flex; gap: 10px; margin-bottom: 6px; font-size: 14px; }
+  .ticket-field .flabel { font-weight: 700; color: #555; min-width: 130px; }
+  .ticket-block { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin: 10px 0; font-size: 14px; }
+  .ticket-sig { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 12.5px; color: #888; }
+
+  mark { background: #fff176; padding: 0 2px; border-radius: 2px; }
+
+  /* Notebook */
+  .notebook-card {
+    max-width: 720px;
+    background: #fdfdf7;
+    border: 1px solid #ece8cf;
+    border-radius: 12px;
+    padding: 1.1rem 1.4rem;
+    margin-top: 1.25rem;
+  }
+  .notebook-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a08c1f;
+    margin-bottom: 8px;
+  }
+  #notebook-input {
+    width: 100%;
+    min-height: 70px;
+    border: 1px solid #e5dfc0;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    resize: vertical;
+    background: #fff;
+  }
+  #notebook-input:focus { outline: none; border-color: var(--blue); }
+
+  /* Reveal overlay */
+  #reveal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,20,20,0.55);
+    z-index: 50;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem;
+    overflow-y: auto;
+  }
+
+  .reveal-card {
+    background: #fff;
+    max-width: 680px;
+    width: 100%;
+    border-radius: 14px;
+    padding: 2rem 2.2rem 2.4rem;
+    position: relative;
+  }
+
+  .reveal-close {
+    position: absolute;
+    top: 16px; right: 18px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .reveal-close:hover { color: #333; }
+
+  .reveal-title { font-size: 21px; font-weight: 700; margin-bottom: 4px; color: #111; }
+  .reveal-sub { font-size: 13px; color: #888; margin-bottom: 1.4rem; }
+
+  .reveal-card h4 {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #888;
+    margin: 1.4rem 0 0.6rem;
+  }
+  .reveal-card h4:first-of-type { margin-top: 0; }
+
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .timeline-date {
+    flex-shrink: 0;
+    width: 74px;
+    font-weight: 700;
+    color: var(--blue);
+    font-size: 12.5px;
+    padding-top: 1px;
+  }
+
+  .reveal-card ol { padding-left: 1.3rem; }
+  .reveal-card ol li { font-size: 14px; margin-bottom: 8px; line-height: 1.6; }
+
+  @media (max-width: 760px) {
+    .workspace { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--line); max-height: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 1: TRIGGER ============ -->
+<div id="trigger-screen">
+  <div class="trigger-wrap">
+    <div class="trigger-eyebrow">Electronic Discovery — Course Opener</div>
+    <div class="trigger-title">Data tells a story. You have to know when to go look for it.</div>
+
+    <div class="hotline-card">
+      <div class="hotline-meta">Sabal Point Ethics &amp; Compliance Hotline — Report #2026-014</div>
+      <div class="hotline-sub">Received 02/14/2026, 6:52 AM &middot; Anonymous, web submission</div>
+      <div class="hotline-quote">"I don't want to give my name. I work in facilities. I keep hearing that Whitfield gets called out for 'emergency' jobs our own guys already handled. Somebody should pull the invoices for Riverwalk Commons and ask maintenance what actually happened out there before anybody pays it. I'm not the only one who's noticed Ray and that vendor are pretty friendly."</div>
+    </div>
+
+    <div class="gc-card">
+      <div class="gc-label">From General Counsel</div>
+      <div class="gc-text">Before we decide whether this needs a full investigation, pull whatever we have on the Riverwalk Commons vendor account &mdash; Ray Delgado's files, the vendor's (Whitfield Grounds &amp; Maintenance), and Priya's records.</div>
+      <div class="gc-text">See if there's anything here.</div>
+    </div>
+
+    <button class="begin-btn" onclick="beginReview()">Open the file &rarr;</button>
+    <div class="trigger-note">No one hands you the answer. You're looking because someone gave you a reason to.</div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: REVIEW WORKSPACE ============ -->
+<div id="review-screen">
+  <div class="topbar">
+    <div class="topbar-title">Sabal Point Facilities Group <span>&middot; Riverwalk Commons vendor review</span></div>
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="search-input" placeholder="Search all documents..." oninput="onSearch()">
+    </div>
+    <div id="search-count"></div>
+    <button class="reveal-toggle-btn" onclick="openReveal()">What actually happened &rarr;</button>
+  </div>
+
+  <div class="workspace">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main-pane" id="main-pane">
+      <div class="empty-state">
+        <div class="icon">&#128193;</div>
+        <div>Select a document to begin, or search above.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REVEAL OVERLAY ============ -->
+<div id="reveal-overlay">
+  <div class="reveal-card">
+    <button class="reveal-close" onclick="closeReveal()">&times;</button>
+    <div class="reveal-title">&#9878;&#65039; What actually happened</div>
+    <div class="reveal-sub">Reconstructed chronology, Jan 29 &ndash; Feb 12, 2026</div>
+
+    <h4>Timeline</h4>
+    <div class="timeline-item"><div class="timeline-date">Jan 29</div><div>Dana emails Ray personally, thanking him for "taking care of me on the Riverwalk job" and proposing golf. A personal relationship — not proof of anything on its own.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 4&ndash;5</div><div>Priya asks Ray whether Whitfield's $18,400 Riverwalk quote should go to competitive bid per policy. Ray overrides her — the 4th such waiver of the year for this vendor.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 8&ndash;9</div><div>Sabal Point's own maintenance tech (M. Ortiz) repairs the identical irrigation issue in-house for $640.18 and closes the ticket, noting no outside contractor was needed.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 9</div><div>Dana instructs her bookkeeper to invoice Riverwalk "the usual way" — same consulting-fee line item as three prior jobs — and to "take care of R the same as always."</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 10</div><div>Whitfield invoices Sabal Point $18,400 for the repair already completed in-house, including a $4,800 "Site Consulting &amp; Coordination Fee" with no defined scope.</div></div>
+    <div class="timeline-item"><div class="timeline-date">Feb 12</div><div>Priya's own spend tracker flags the invoice as the 4th no-bid Whitfield job of the year, 40% above benchmark — without knowing about the ticket, the kickback instruction, or Ray's relationship with Dana.</div></div>
+
+    <h4>Discuss</h4>
+    <ol>
+      <li>What in the tip made you look at these three people, specifically, and not someone else?</li>
+      <li>Which single document, if you'd never seen the others, would you have found least suspicious?</li>
+      <li>The maintenance ticket is the document that breaks the case open — and it isn't an email. What does that tell you about where evidence lives in a real matter?</li>
+      <li>"R" is never fully named. What made you confident (or not) who that was?</li>
+      <li>The tip gave you a hunch, not a case. Where's the line between a hunch that justifies pulling three people's files, and one that doesn't?</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const docs = [
+  {
+    id: "rd1", custodianId: "rd", type: "email", typeLabel: "Email",
+    bates: "SBP-RDELGADO-000001", date: "01/29/2026", title: "Isla Verde Saturday?",
+    render: function() {
+      return emailView({
+        from: "Dana Whitfield &lt;dana@whitfieldgrounds.com&gt;",
+        to: "Ray Delgado &lt;rdelgado@sabalpointfg.com&gt;",
+        date: "Thu, 01/29/2026 5:42 PM",
+        subject: "Isla Verde Saturday?",
+        body: [
+          "Ray,",
+          "Great seeing you at the property walk-through Tuesday. You still up for Isla Verde Saturday morning? I'll grab us an 8:00 tee time.",
+          "Also &ndash; really appreciate you taking care of me on the Riverwalk job. Dinner's on me next time, my treat. We should have the paperwork moving early next week.",
+          "Talk soon,<br>Dana"
+        ]
+      });
+    },
+    search: "dana whitfield ray delgado isla verde golf tee time riverwalk taking care of me dinner paperwork"
+  },
+  {
+    id: "rd2", custodianId: "rd", type: "email", typeLabel: "Email",
+    bates: "SBP-RDELGADO-000002", date: "02/05/2026", title: "RE: Riverwalk irrigation quote — bid threshold?",
+    render: function() {
+      return emailView({
+        from: "Ray Delgado &lt;rdelgado@sabalpointfg.com&gt;",
+        to: "Priya Nair &lt;pnair@sabalpointfg.com&gt;",
+        date: "Thu, 02/05/2026 9:14 AM",
+        subject: "RE: Riverwalk irrigation quote — bid threshold?",
+        body: [
+          "Priya,",
+          "No need to put this out to bid. Whitfield already knows our properties inside and out and we don't want to lose continuity on the grounds contract mid-season. Go ahead and code it to the Riverwalk maintenance budget and get the PO cut so they can start.",
+          "Ray"
+        ],
+        quoted: {
+          from: "Priya Nair",
+          date: "Wed, 02/04/2026 4:47 PM",
+          to: "Ray Delgado",
+          subject: "Riverwalk irrigation quote — bid threshold?",
+          body: [
+            "Hi Ray,",
+            "I have Whitfield's quote in for the Riverwalk irrigation work at $18,400. Per the vendor policy, anything over $15,000 is supposed to go out for at least two competing quotes before we approve. Do you want me to hold this for competitive bid, or is there a reason to move forward with Whitfield directly?",
+            "This would be the fourth job this year with Whitfield over the threshold without a second quote on file. Just want to make sure we're covered.",
+            "Priya"
+          ]
+        }
+      });
+    },
+    search: "ray delgado priya nair riverwalk irrigation quote bid threshold policy 18400 competitive fourth job whitfield continuity po purchase order"
+  },
+  {
+    id: "dw1", custodianId: "dw", type: "invoice", typeLabel: "Invoice",
+    bates: "SBP-DWHITFIELD-000001", date: "02/10/2026", title: "Invoice WGM-2026-0147",
+    render: function() {
+      return `
+        <div class="invoice-meta-row"><strong>Whitfield Grounds &amp; Maintenance LLC</strong> &mdash; 4410 Gandy Blvd, Tampa, FL 33611</div>
+        <div class="invoice-meta-row">Invoice #: WGM-2026-0147</div>
+        <div class="invoice-meta-row">Date: 02/10/2026</div>
+        <div class="invoice-meta-row">Bill To: Sabal Point Facilities Group &ndash; Riverwalk Commons (Attn: Ray Delgado)</div>
+        <table class="doc-table">
+          <tr><th>Description</th><th class="amount-cell">Amount</th></tr>
+          <tr><td>Emergency Irrigation System Repair &ndash; Main Line, Bldg C &ndash; Materials</td><td class="amount-cell">$6,100.00</td></tr>
+          <tr><td>Labor &ndash; 2 technicians x 1 day, emergency response rate</td><td class="amount-cell">$7,500.00</td></tr>
+          <tr class="flag-row"><td>Site Consulting &amp; Coordination Fee</td><td class="amount-cell">$4,800.00</td></tr>
+          <tr class="total-row"><td>TOTAL DUE (Net 30)</td><td class="amount-cell">$18,400.00</td></tr>
+        </table>
+        <div class="invoice-note">Reference: Approved per R. Delgado &ndash; continuity vendor, competitive bid waived.</div>
+      `;
+    },
+    search: "whitfield grounds maintenance invoice wgm-2026-0147 riverwalk commons emergency irrigation repair materials labor site consulting coordination fee 18400 4800 delgado bid waived"
+  },
+  {
+    id: "dw2", custodianId: "dw", type: "email", typeLabel: "Email",
+    bates: "SBP-DWHITFIELD-000002", date: "02/09/2026", title: "Riverwalk invoice — cut it like the others",
+    render: function() {
+      return emailView({
+        from: "Dana Whitfield &lt;dana@whitfieldgrounds.com&gt;",
+        to: "Monica Reyes &lt;monica@whitfieldgrounds.com&gt;",
+        date: "Mon, 02/09/2026 11:03 AM",
+        subject: "Riverwalk invoice — cut it like the others",
+        body: [
+          "Monica,",
+          "Go ahead and cut the invoice for Riverwalk the usual way &ndash; materials and labor same as we quoted, plus the consulting line same as the last three (Oakview, Palmetto Crossing, Bayshore). Send it Wednesday so it's in before month end.",
+          "And don't forget to take care of R the same as always once it clears &ndash; usual amount, usual method.",
+          "Thanks,<br>Dana"
+        ]
+      });
+    },
+    search: "dana whitfield monica reyes riverwalk invoice cut usual materials labor consulting line oakview palmetto crossing bayshore take care of R usual amount usual method"
+  },
+  {
+    id: "pn1", custodianId: "pn", type: "sheet", typeLabel: "Spreadsheet",
+    bates: "SBP-PNAIR-000001", date: "Last updated 02/12/2026", title: "Vendor Spend Tracker",
+    render: function() {
+      const rows = [
+        ["GreenScape Partners","Oakview Plaza","05/14/25","Routine irrigation zone repair","$4,200","Y","&ndash;6%",""],
+        ["Coastal Turf &amp; Irrigation","Bayshore Center","06/02/25","Sprinkler head replacement","$3,100","Y","&ndash;11%",""],
+        ["Whitfield Grounds &amp; Maintenance","Oakview Plaza","07/19/25","Irrigation repair + consulting fee","$14,200","N","+34%","No 2nd quote on file"],
+        ["GreenScape Partners","Palmetto Crossing","08/08/25","Landscape bed renovation","$5,600","Y","&ndash;2%",""],
+        ["Whitfield Grounds &amp; Maintenance","Palmetto Crossing","09/25/25","Irrigation repair + consulting fee","$16,750","N","+38%","2nd job over threshold w/o bid"],
+        ["Coastal Turf &amp; Irrigation","Riverwalk Commons","10/30/25","Backflow preventer service","$2,800","Y","&ndash;8%",""],
+        ["Whitfield Grounds &amp; Maintenance","Bayshore Center","12/11/25","Emergency irrigation repair + consulting fee","$17,900","N","+41%","3rd job over threshold w/o bid"],
+        ["GreenScape Partners","Riverwalk Commons","01/15/26","Seasonal turf treatment","$3,400","Y","&ndash;4%",""],
+        ["Whitfield Grounds &amp; Maintenance","Riverwalk Commons","02/10/26","Emergency irrigation repair + consulting fee","$18,400","N","+40%","4th job over threshold w/o bid &ndash; consulting line unclear, flagged 2/12"],
+      ];
+      let body = rows.map(r => `<tr${r[0].startsWith("Whitfield") ? ' class="flag-row"' : ''}>${r.map((c,i)=>`<td${i===4?' class="amount-cell"':''}>${c}</td>`).join("")}</tr>`).join("");
+      return `
+        <div class="invoice-meta-row">Grounds &amp; Irrigation Vendor Spend Tracker &ndash; rolling 18 months. Maintained by P. Nair, Controller.</div>
+        <table class="doc-table">
+          <tr><th>Vendor</th><th>Property</th><th>Date</th><th>Job</th><th class="amount-cell">Amount</th><th>Bid on file?</th><th>vs. benchmark</th><th>Notes</th></tr>
+          ${body}
+        </table>
+      `;
+    },
+    search: "priya nair vendor spend tracker greenscape coastal turf irrigation whitfield grounds maintenance oakview palmetto crossing bayshore riverwalk commons consulting fee bid benchmark flagged review 40% 18400"
+  },
+  {
+    id: "pn2", custodianId: "pn", type: "pdf", typeLabel: "Maintenance Ticket",
+    bates: "SBP-PNAIR-000002", date: "02/08–09/2026", title: "Ticket #4471 — Riverwalk Commons",
+    render: function() {
+      return `
+        <div class="ticket-field"><div class="flabel">Ticket #:</div><div>4471</div></div>
+        <div class="ticket-field"><div class="flabel">Property:</div><div>Riverwalk Commons</div></div>
+        <div class="ticket-field"><div class="flabel">Date opened:</div><div>02/08/2026, 3:15 PM</div></div>
+        <div class="ticket-field"><div class="flabel">Date closed:</div><div>02/09/2026, 10:40 AM</div></div>
+        <div class="ticket-field"><div class="flabel">Reported by:</div><div>M. Ortiz, Facilities Technician</div></div>
+        <div class="ticket-field"><div class="flabel">Issue:</div><div>Irrigation main line break near Bldg C, flooding walkway</div></div>
+        <div class="ticket-block">
+          <strong>Action taken:</strong> Located and repaired break in 2&Prime; PVC main line near Bldg C. Replaced approx. 6 ft section of pipe, coupling, and valve assembly. No outside contractor called &ndash; repair completed in-house.
+        </div>
+        <div class="ticket-field"><div class="flabel">Parts used:</div><div>2&Prime; PVC coupling, valve assembly &ndash; Ferguson Waterworks &ndash; $640.18 (receipt on file)</div></div>
+        <div class="ticket-field"><div class="flabel">Labor:</div><div>6.0 hrs &ndash; M. Ortiz</div></div>
+        <div class="ticket-field"><div class="flabel">Status:</div><div>CLOSED</div></div>
+        <div class="ticket-block" style="font-style:italic;">Notes: Property manager notified repair complete morning of 2/9. No further contractor visit needed for this issue.</div>
+        <div class="ticket-sig">Signed: M. Ortiz &nbsp;&nbsp;&nbsp; Reviewed by: ______________</div>
+      `;
+    },
+    search: "ticket 4471 riverwalk commons irrigation main line break bldg c ortiz facilities technician repaired in-house no outside contractor parts ferguson waterworks 640 labor closed"
+  },
+];
+
+const custodians = [
+  { id: "rd", name: "Ray Delgado", role: "Facilities Manager, Sabal Point", initials: "RD" },
+  { id: "dw", name: "Dana Whitfield", role: "Owner, Whitfield Grounds & Maintenance LLC", initials: "DW" },
+  { id: "pn", name: "Priya Nair", role: "Controller, Sabal Point", initials: "PN" },
+];
+
+let activeDocId = null;
+let currentQuery = "";
+
+function emailView(msg) {
+  let html = `
+    <div class="email-header">
+      <div class="row"><div class="field">From:</div><div>${msg.from}</div></div>
+      <div class="row"><div class="field">To:</div><div>${msg.to}</div></div>
+      <div class="row"><div class="field">Date:</div><div>${msg.date}</div></div>
+      <div class="row"><div class="field">Subject:</div><div>${msg.subject}</div></div>
+    </div>
+    <div class="email-body">${msg.body.map(p => `<p>${p}</p>`).join("")}</div>
+  `;
+  if (msg.quoted) {
+    html += `<hr class="email-thread-divider">`;
+    html += `
+      <div class="email-header">
+        <div class="row"><div class="field">From:</div><div>${msg.quoted.from}</div></div>
+        <div class="row"><div class="field">To:</div><div>${msg.quoted.to}</div></div>
+        <div class="row"><div class="field">Date:</div><div>${msg.quoted.date}</div></div>
+        <div class="row"><div class="field">Subject:</div><div>${msg.quoted.subject}</div></div>
+      </div>
+      <div class="email-body">${msg.quoted.body.map(p => `<p>${p}</p>`).join("")}</div>
+    `;
+  }
+  return html;
+}
+
+function beginReview() {
+  document.getElementById('trigger-screen').style.display = 'none';
+  document.getElementById('review-screen').style.display = 'block';
+  renderSidebar();
+}
+
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '';
+  custodians.forEach(cust => {
+    const group = document.createElement('div');
+    group.className = 'custodian-group';
+    const custDocs = docs.filter(d => d.custodianId === cust.id);
+
+    let html = `
+      <div class="custodian-header">
+        <div class="custodian-avatar">${cust.initials}</div>
+        <div>${cust.name}<div class="custodian-role">${cust.role}</div></div>
+      </div>
+    `;
+    custDocs.forEach(d => {
+      const matches = currentQuery === "" || d.search.includes(currentQuery) || d.title.toLowerCase().includes(currentQuery);
+      const dimmed = currentQuery !== "" && !matches;
+      html += `
+        <button class="doc-item ${d.id === activeDocId ? 'active' : ''} ${dimmed ? 'dimmed' : ''}" onclick="openDoc('${d.id}')">
+          <div class="doc-item-top">
+            <span class="doc-type-tag tag-${d.type}">${d.typeLabel}</span>
+          </div>
+          <div class="doc-item-title">${d.title}</div>
+          <div class="doc-item-meta">${d.bates} &middot; ${d.date}</div>
+        </button>
+      `;
+    });
+    group.innerHTML = html;
+    sb.appendChild(group);
+  });
+}
+
+function openDoc(id) {
+  activeDocId = id;
+  const d = docs.find(x => x.id === id);
+  const pane = document.getElementById('main-pane');
+  let bodyHtml = d.render();
+  if (currentQuery) {
+    bodyHtml = highlightHtml(bodyHtml, currentQuery);
+  }
+  pane.innerHTML = `
+    <div class="doc-view">
+      <div class="doc-view-header">
+        <span class="doc-type-tag tag-${d.type}">${d.typeLabel}</span>
+      </div>
+      <div class="doc-bates">${d.bates} &middot; ${d.date}</div>
+      ${bodyHtml}
+    </div>
+    <div class="notebook-card">
+      <div class="notebook-label">&#128221; Investigation notebook</div>
+      <textarea id="notebook-input" placeholder="What's your working theory so far? What still doesn't add up?">${notebookText}</textarea>
+    </div>
+  `;
+  document.getElementById('notebook-input').addEventListener('input', e => { notebookText = e.target.value; });
+  renderSidebar();
+}
+
+let notebookText = "";
+
+function highlightHtml(html, query) {
+  if (!query) return html;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('(' + escaped + ')', 'gi');
+  // avoid breaking tags: split by tags, only highlight text nodes
+  const parts = html.split(/(<[^>]+>)/g);
+  return parts.map(part => {
+    if (part.startsWith('<')) return part;
+    return part.replace(re, '<mark>$1</mark>');
+  }).join('');
+}
+
+function onSearch() {
+  currentQuery = document.getElementById('search-input').value.trim().toLowerCase();
+  const countEl = document.getElementById('search-count');
+  if (currentQuery === "") {
+    countEl.textContent = "";
+  } else {
+    const n = docs.filter(d => d.search.includes(currentQuery) || d.title.toLowerCase().includes(currentQuery)).length;
+    countEl.textContent = n + " of " + docs.length + " documents match";
+  }
+  renderSidebar();
+  if (activeDocId) openDoc(activeDocId);
+}
+
+function openReveal() {
+  document.getElementById('reveal-overlay').style.display = 'flex';
+}
+function closeReveal() {
+  document.getElementById('reveal-overlay').style.display = 'none';
+}
+document.getElementById('reveal-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'reveal-overlay') closeReveal();
+});
+</script>
+</body>
+</html>
