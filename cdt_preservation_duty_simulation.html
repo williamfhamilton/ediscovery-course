@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When Does the Duty to Preserve Trigger? — Circuit Direct, Inc.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f5f4f0;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .top-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .sub-title {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .standard-box {
+    background: #fff;
+    border: 1px solid #dde8f5;
+    border-left: 4px solid #2E75B6;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .standard-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #2E75B6;
+    margin-bottom: 6px;
+  }
+
+  .standard-box p {
+    font-size: 14px;
+    color: #1a3a5c;
+    line-height: 1.65;
+  }
+
+  .standard-box p + p {
+    margin-top: 8px;
+  }
+
+  .progress-wrap {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .pip {
+    height: 5px;
+    flex: 1;
+    border-radius: 3px;
+    background: #ddd;
+    transition: background 0.35s;
+  }
+  .pip.done { background: #639922; }
+  .pip.active { background: #2E75B6; }
+
+  .stage-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .stage-num {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .stage-num.active { background: #dbeafe; color: #1d4ed8; }
+  .stage-num.done   { background: #dcfce7; color: #166534; font-size: 18px; }
+
+  .stage-title-wrap { flex: 1; }
+  .stage-title { font-size: 17px; font-weight: 600; color: #111; }
+  .stage-meta  { font-size: 12px; color: #999; margin-top: 1px; }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .tag-neutral { background: #f0f0f0; color: #555; }
+  .tag-warn    { background: #fff3cd; color: #7c5a00; }
+  .tag-alert   { background: #fde8e8; color: #8b1a1a; }
+
+  .stage-body {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .doc-block {
+    background: #f8f9fa;
+    border-left: 4px solid #aac4de;
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.85rem 0;
+    font-size: 13.5px;
+    font-style: italic;
+    color: #444;
+    line-height: 1.65;
+  }
+
+  .discuss-box {
+    background: #fffbf0;
+    border: 1px solid #f0d080;
+    border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-top: 0.85rem;
+  }
+  .discuss-box .dlabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #a07000;
+    margin-bottom: 5px;
+  }
+  .discuss-box .dtext {
+    font-size: 14px;
+    color: #4a3200;
+    line-height: 1.6;
+  }
+
+  .verdict-section { margin-top: 1.1rem; }
+  .verdict-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .verdict-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .vbtn {
+    flex: 1;
+    min-width: 120px;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .vbtn:hover { background: #f5f5f5; }
+  .vbtn.sel-yes    { background: #f0fbe8; border-color: #5a9216; color: #2a5a00; font-weight: 600; }
+  .vbtn.sel-no     { background: #fff8ec; border-color: #c8900a; color: #6b4400; font-weight: 600; }
+  .vbtn.sel-maybe  { background: #f0eeff; border-color: #7060cc; color: #3a2a8a; font-weight: 600; }
+
+  .advance-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #2E75B6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .advance-btn:hover  { background: #1a5a9a; }
+  .advance-btn:active { transform: scale(0.97); }
+  .advance-btn.reveal { background: #7c3aed; }
+  .advance-btn.reveal:hover { background: #6025cc; }
+
+  .outcome-card {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-left: 4px solid #dc2626;
+    border-radius: 0 10px 10px 0;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .outcome-card .otitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #7f1d1d;
+    margin-bottom: 10px;
+  }
+  .outcome-card p {
+    font-size: 14.5px;
+    color: #450a0a;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+  .outcome-card p:last-child { margin-bottom: 0; }
+
+  .debrief-card {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+  }
+  .debrief-card .dlabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .debrief-card ol {
+    padding-left: 1.4rem;
+  }
+  .debrief-card li {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .debrief-card li:last-child { margin-bottom: 0; }
+
+  .restart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1.5rem;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+    color: #555;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #f0f0f0; }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 600px) {
+    .main-title { font-size: 24px; }
+    .vbtn { min-width: 90px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-label">Electronic Discovery — Duty to Preserve: Case Study (Consumer / Product Claims)</div>
+  <div class="main-title">When does the duty to preserve trigger?</div>
+  <div class="sub-title">Circuit Direct, Inc. ("CDT") &mdash; Consumer Class Action Scenario</div>
+
+  <div class="standard-box">
+    <div class="label">The legal standard</div>
+    <p>The duty to preserve arises when litigation is <em>reasonably anticipated</em> — that is, when a party knows or reasonably should know that evidence may be relevant to future litigation.</p>
+    <p>This is an objective standard: not when suit is filed, not when a lawyer is retained, but when a reasonable person in the party's position would foresee the prospect of litigation.</p>
+  </div>
+
+  <div class="standard-box" style="border-left-color: #888; border-color: #e8e8e8;">
+    <div class="label" style="color: #666;">Background</div>
+    <p><strong>The company:</strong> Circuit Direct, Inc. ("CDT"), a Miami-based online reseller of computer components (~$10 million in 2015 revenue), founded in 2013 by siblings Jane Fioro (President) and John Fioro (COO). Neither has ever taken a salary; both own all of the company's stock. John is a member of the Florida Bar and practiced litigation before co-founding CDT.</p>
+    <p style="margin-top: 8px;"><strong>The pressure point:</strong> On August 5, 2016, investors conditioned a $100 million investment on CDT reaching profitability for calendar year 2016. CDT responded with an aggressive "Profitability in 2016" campaign — including a "We Guarantee... Double Your Money Back in Ten Days" promise and a 25% salary increase for employees if the company turns a profit. The campaign supercharges sales of the SuperDrive, a top-selling external hard drive sourced from a Chinese supplier, DrivesPlus, whose products have carried return rates as high as 50%.</p>
+  </div>
+
+  <div class="progress-wrap" id="pips"></div>
+  <div id="stages"></div>
+
+</div>
+
+<script>
+const stages = [
+  {
+    num: "1", date: "August 2016", title: "The guarantee campaign launches — with a buried disclaimer",
+    tag: "neutral", tagLabel: "Internal event",
+    body: "Chasing the investors' $100 million offer, CDT launches the \"Profitability in 2016\" campaign on August 15: a \"We Guarantee\" double-your-money-back promise plus a company-wide 25% raise if 2016 is profitable. Internally, the campaign is controversial — an August email debate flags that the money-back guarantee could create serious refund liability. Separately, back on January 15, CDT had received a report that 30% of its Chinese-manufactured products had quality issues over the prior two years. Aware of that report, and drawing on his own litigation background, COO John Fioro has the webmaster quietly add a disclaimer on page 27 of a 30-page Terms & Conditions document (effective August 31) stating the guarantee \"may not apply\" to Chinese-made products. He privately understands that almost no consumer ever reads that document.",
+    doc: "Internal email debate, August 2016 (paraphrased): several employees argue the guarantee is too risky and could expose the company to refund liability it can't sustain.",
+    discuss: "Has the duty to preserve triggered for CDT? Does it matter that John Fioro — a lawyer by training — placed a disclaimer specifically anticipating a products problem he already had reason to know about? Is knowledge of a general defect-rate report enough, or does it take something more specific?"
+  },
+  {
+    num: "2", date: "October 1–8", title: "The returns spike",
+    tag: "warn", tagLabel: "Internal red flag",
+    body: "CDT is selling roughly 17,500 SuperDrives a month. On October 1, while reviewing daily sales reports, John notices unusually high return requests for the SuperDrive and begins tracking the numbers daily. By October 7, he concludes something is seriously wrong and emails the sales representatives — copying Jane — asking about the volume of return requests. On October 8, the sales team confirms that nearly all SuperDrive users are experiencing device corruption and that the units simply don't work.",
+    doc: "John Fioro, internal email (paraphrased, Oct. 7): asks sales representatives to explain the sudden spike in SuperDrive return requests; copies Jane Fioro.",
+    discuss: "Is this the trigger point — a data-driven pattern discovered and escalated internally by leadership, rather than a single customer complaint? Does it matter that Jane, the President, was looped in immediately?"
+  },
+  {
+    num: "3", date: "October 8–25", title: "Refusing refunds, still marketing the guarantee",
+    tag: "alert", tagLabel: "Anticipated litigation",
+    body: "John grows increasingly worried — strong SuperDrive sales are essential to hitting the profitability target, and customers are now demanding the double-refund promised under the guarantee. He explicitly recognizes that consumer lawsuits are \"a real possibility\" as complaints turn hostile, and he doubts the buried Chinese-manufacturing disclaimer would hold up in court. John and Jane jointly direct the sales department not to honor any return or double-refund requests \"until further notice,\" while CDT sends sample units to DrivesPlus for testing. On October 20, DrivesPlus reports it needs more time but that initial tests show \"no systemic issues.\" CDT continues aggressively marketing the guarantee and the SuperDrive throughout. By October 25, consumers begin posting complaints on public forums like Ripoff Report — including complaints that CDT isn't honoring its own guarantee.",
+    doc: null,
+    discuss: "John's own words — that he \"understood that consumer lawsuits were a real possibility\" — appear in the internal record. How much weight should a party's own contemporaneous assessment carry against the objective reasonable-anticipation standard? Does withholding refunds while continuing to market the product change the preservation calculus, separate from whatever liability it creates on the merits?"
+  },
+  {
+    num: "4", date: "November 1–10", title: "The almost-deletion",
+    tag: "alert", tagLabel: "Near-spoliation moment",
+    body: "By November 1, CDT is in open crisis: its website is flooded with complaints, many alleging the company isn't honoring the We Guarantee promise. On November 10, John and Jane grow concerned that their own August emails debating the guarantee and the Salary Plus campaign might be \"misunderstood\" if surfaced later. They discuss deleting or altering some of those messages — but ultimately decide against it. No litigation hold has been issued at any point in this timeline.",
+    doc: null,
+    discuss: "If the duty had already attached by this point, what would deleting those August emails have meant for CDT? Does it matter that John and Jane only discussed it and didn't go through with it? What should have existed by November 1 that didn't — and whose job was it to put it in place, given CDT's flat, founder-only management structure?"
+  },
+  {
+    num: "5", date: "November 15", title: "The letter from Morton & Morton",
+    tag: "alert", tagLabel: "Attorney contact",
+    body: "CDT receives correspondence from the plaintiffs' firm Morton & Morton (M&M), stating that M&M is preparing a consumer class action against the company that will be filed soon, seeking compensatory and punitive damages, attorneys' fees, and costs for breach of warranty, fraud, and deceptive sales practices.",
+    doc: "Morton & Morton correspondence (paraphrased, Nov. 15): advises CDT that a consumer class action is being prepared and will be filed soon, alleging breach of warranty, fraud, and deceptive trade practices.",
+    discuss: "Is the M&M letter the trigger — or confirmation of a duty that arose weeks earlier? Trace back through the timeline: at what point would a reasonable company in CDT's position have anticipated litigation? What does the gap between that point and today tell you about CDT's exposure?"
+  }
+];
+
+const verdicts = new Array(stages.length).fill(null);
+let current = 0;
+let showOutcome = false;
+
+function renderPips() {
+  const wrap = document.getElementById('pips');
+  wrap.innerHTML = '';
+  for (let i = 0; i < stages.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < current ? ' done' : i === current ? ' active' : '');
+    wrap.appendChild(d);
+  }
+}
+
+function renderStages() {
+  const container = document.getElementById('stages');
+  container.innerHTML = '';
+
+  for (let i = 0; i <= current; i++) {
+    const s = stages[i];
+    const isDone = i < current;
+    const isActive = i === current;
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+
+    const numIcon = isDone ? '✓' : s.num;
+    const numClass = isDone ? 'done' : 'active';
+    const tagClass = s.tag === 'alert' ? 'tag-alert' : s.tag === 'warn' ? 'tag-warn' : 'tag-neutral';
+
+    let html = `
+      <div class="stage-header">
+        <div class="stage-num ${numClass}">${numIcon}</div>
+        <div class="stage-title-wrap">
+          <div class="stage-title">${s.title}</div>
+          <div class="stage-meta">${s.date}</div>
+        </div>
+      </div>
+      <span class="tag ${tagClass}">${s.tagLabel}</span>
+      <div class="stage-body">${s.body}</div>
+    `;
+
+    if (s.doc) {
+      html += `<div class="doc-block">${s.doc}</div>`;
+    }
+
+    html += `
+      <div class="discuss-box">
+        <div class="dlabel">&#x1F4AC; Group discussion</div>
+        <div class="dtext">${s.discuss}</div>
+      </div>
+    `;
+
+    if (isActive) {
+      const v = verdicts[i];
+      html += `
+        <div class="verdict-section">
+          <div class="verdict-label">Has the duty to preserve triggered?</div>
+          <div class="verdict-btns">
+            <button class="vbtn ${v === 'yes' ? 'sel-yes' : ''}" onclick="setVerdict(${i},'yes')">Yes — triggered</button>
+            <button class="vbtn ${v === 'no' ? 'sel-no' : ''}" onclick="setVerdict(${i},'no')">Not yet</button>
+            <button class="vbtn ${v === 'maybe' ? 'sel-maybe' : ''}" onclick="setVerdict(${i},'maybe')">Arguable</button>
+          </div>
+        </div>
+      `;
+
+      const isLast = i === stages.length - 1;
+      const btnLabel = isLast ? '&#x1F441; Reveal outcome' : 'Next stage &rarr;';
+      const btnClass = isLast ? 'advance-btn reveal' : 'advance-btn';
+      html += `<button class="${btnClass}" onclick="advance()">${btnLabel}</button>`;
+    }
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  if (showOutcome) {
+    const ocard = document.createElement('div');
+    ocard.className = 'stage-card';
+    ocard.innerHTML = `
+      <div class="outcome-card">
+        <div class="otitle">&#x2696;&#xFE0F; What actually happened</div>
+        <p>Morton & Morton filed a consumer class action against CDT in the Southern District of Florida in early December, alleging breach of warranty, fraud, and deceptive and unfair trade practices, and seeking rescission of the disclaimer as unconscionable. In discovery, plaintiffs moved for sanctions under Rule 37(e), pointing to the five-week gap between CDT's own internal recognition of likely litigation and the eventual issuance of any hold — a hold that, in fact, was never formally distributed at all.</p>
+        <p>The court found that the duty to preserve had triggered no later than <strong>October 8</strong> — the date John Fioro's own emails showed he had concluded the SuperDrive was systemically defective and had begun tracking the problem daily — and noted that John's own statement that he "understood consumer lawsuits were a real possibility" was strong evidence bearing on what a reasonable party in CDT's position would have foreseen. The court further observed that CDT's decision on October 8 to freeze consumer refunds while continuing to market the guarantee was itself the kind of business response that signals a party has already begun anticipating a legal challenge to that conduct.</p>
+        <p>Because John and Jane ultimately did not delete the August emails they discussed removing, the court found no independent Rule 37(e) violation on that ground — but noted that the fact the deletion was seriously considered, without any hold in place to prohibit it, reflected an absence of governance around preservation obligations that a two-person, founder-run company cannot excuse merely by its size. The case proceeded to a certified class and settled during pretrial briefing on class certification.</p>
+      </div>
+      <div class="debrief-card">
+        <div class="dlabel">Debrief questions</div>
+        <ol>
+          <li>At which stage did your group first say the duty had triggered? How does that compare to the court's finding?</li>
+          <li>This scenario turns heavily on a party's own words ("consumer lawsuits were a real possibility"). Compare that to Palmetto Ridge, where the trigger analysis rested more on external, objective facts. Which kind of evidence is more useful to a court — and to opposing counsel?</li>
+          <li>John Fioro is both a business decision-maker and a lawyer. Does his legal background raise or lower the bar for what he "reasonably should have known"?</li>
+          <li>What should CDT have done differently on October 8, when the decision was made to freeze refunds?</li>
+          <li>CDT has no HR department, no in-house counsel, and no IT department — just two founders. Who is responsible for issuing a litigation hold in an organization this small?</li>
+          <li>The August emails were never deleted. Does that fact make this an easier or harder case than Palmetto Ridge, where Reeves did delete the Slack thread?</li>
+        </ol>
+      </div>
+      <button class="restart-btn" onclick="restart()">&#x21BA; Restart from Stage 1</button>
+    `;
+    container.appendChild(ocard);
+  }
+
+  renderPips();
+
+  if (current > 0 || showOutcome) {
+    const cards = container.querySelectorAll('.stage-card');
+    const last = cards[cards.length - 1];
+    setTimeout(() => last.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+}
+
+function setVerdict(i, v) {
+  verdicts[i] = v;
+  renderStages();
+}
+
+function advance() {
+  if (current < stages.length - 1) {
+    current++;
+  } else {
+    showOutcome = true;
+  }
+  renderStages();
+}
+
+function restart() {
+  current = 0;
+  showOutcome = false;
+  verdicts.fill(null);
+  renderStages();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderStages();
+</script>
+</body>
+</html>
