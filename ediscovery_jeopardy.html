@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Discovery Jeopardy</title>
+<style>
+  :root{
+    --board:#0a1a8c; --board-dark:#06105e; --tile:#0b22b8; --tile-hover:#1633d6;
+    --gold:#ffcc33; --white:#ffffff; --muted:#aab4ff; --ink:#0b0f2a;
+    --good:#1fa65a; --bad:#c8352e; --used:#07104a;
+  }
+  /* Keep the board's colors even when the viewer or OS forces high-contrast / reader colors */
+  :root{color-scheme:dark}
+  *{box-sizing:border-box;forced-color-adjust:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{margin:0;height:100%}
+  body{background:var(--board-dark);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;overflow:hidden}
+  button{font:inherit;cursor:pointer;border:0;border-radius:8px}
+  .hidden{display:none!important}
+
+  /* ---------- Setup ---------- */
+  #setup{height:100%;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+  .setup-card{background:var(--board);border:3px solid var(--gold);border-radius:16px;padding:32px 40px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .letterhead{font-size:.8rem;letter-spacing:.08em;color:var(--muted);line-height:1.5;margin-bottom:18px;text-transform:uppercase}
+  .letterhead b{color:var(--white)}
+  h1{font-family:Georgia,"Times New Roman",serif;color:var(--gold);font-size:clamp(2rem,5vw,3.2rem);margin:0 0 6px;text-shadow:3px 3px 0 #000}
+  .sub{color:var(--muted);margin:0 0 24px}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
+  select,input[type=text],input[type=number]{font:inherit;padding:10px 12px;border-radius:8px;border:2px solid #3346d6;background:#fff;color:var(--ink);width:100%}
+  #teamInputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{background:var(--gold);color:var(--ink);font-weight:700;padding:12px 22px;font-size:1.05rem}
+  .btn.secondary{background:#2a3bc4;color:#fff}
+  .btn.good{background:var(--good);color:#fff}
+  .btn.bad{background:var(--bad);color:#fff}
+  .btn-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .hint{font-size:.8rem;color:var(--muted);margin-top:18px;line-height:1.5}
+  kbd{background:#1b2bb0;border:1px solid #4a5cf0;border-radius:4px;padding:1px 6px;font-size:.8em}
+
+  /* ---------- Board ---------- */
+  #game{height:100%;display:flex;flex-direction:column}
+  #grid{flex:1;display:grid;gap:6px;padding:6px;background:#000}
+  .cat{background:var(--board);display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-weight:800;font-size:clamp(.8rem,1.55vw,1.5rem);line-height:1.15;text-shadow:2px 2px 0 #000;letter-spacing:.02em}
+  .tile{background:var(--tile);color:var(--gold);font-family:Georgia,serif;font-weight:700;font-size:clamp(1.4rem,4vw,3.6rem);display:flex;align-items:center;justify-content:center;text-shadow:3px 3px 0 #000;border-radius:0;transition:background .12s}
+  .tile:hover{background:var(--tile-hover)}
+  .tile.used{background:var(--used);color:transparent;text-shadow:none;cursor:default}
+  #bar{display:flex;align-items:stretch;gap:6px;background:#000;padding:0 6px 6px}
+  .team{flex:1;background:var(--board);border-radius:6px;padding:6px 6px;text-align:center;min-width:0;position:relative}
+  .team .nm{font-weight:700;font-size:clamp(.75rem,1.3vw,1.1rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .team .sc{font-family:Georgia,serif;font-weight:700;font-size:clamp(1.2rem,2.6vw,2.2rem);color:var(--white)}
+  .team .sc.neg{color:#ff8a80}
+  .team .adj{position:absolute;top:4px;right:4px;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+  .team:hover .adj{opacity:1}
+  .adj button{background:#2a3bc4;color:#fff;width:24px;height:22px;font-size:.8rem;padding:0;border-radius:4px}
+  .tools{display:flex;flex-direction:column;gap:5px;justify-content:center}
+  .tools button{background:#2a3bc4;color:#fff;font-size:.8rem;padding:6px 10px;white-space:nowrap}
+  .tools button.fj{background:var(--gold);color:var(--ink);font-weight:700}
+
+  /* ---------- Overlay (clue / DD / final) ---------- */
+  #overlay{position:fixed;inset:0;background:var(--board);display:flex;flex-direction:column;padding:3vh 4vw;z-index:10}
+  .ov-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:clamp(.8rem,1.4vw,1.2rem)}
+  .ov-head .val{color:var(--gold);font-family:Georgia,serif;font-size:1.4em}
+  .ov-body{flex:1;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;overflow:auto;padding:2vh 0}
+  .ov-body>:first-child{margin-top:auto}.ov-body>:last-child{margin-bottom:auto}
+  .clue.small{font-size:clamp(1rem,1.7vw,1.5rem)}
+  .answer.small .a{font-size:clamp(1.05rem,1.8vw,1.6rem)}
+  .answer.small{margin-top:1.2vh}.answer.small .note{margin-top:1vh;padding:8px 14px;font-size:clamp(.85rem,1.2vw,1.1rem)}
+  .clue{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.5rem,3.3vw,3.1rem);line-height:1.3;max-width:1400px;text-shadow:2px 2px 0 #000}
+  .answer{margin-top:3vh;max-width:1300px}
+  .answer .a{color:var(--gold);font-family:Georgia,serif;font-weight:700;font-size:clamp(1.3rem,2.6vw,2.4rem);text-shadow:2px 2px 0 #000}
+  .answer .note{margin-top:1.6vh;font-size:clamp(.95rem,1.45vw,1.35rem);line-height:1.45;color:#dfe4ff;background:rgba(0,0,0,.25);border-left:4px solid var(--gold);padding:12px 18px;text-align:left;border-radius:4px}
+  .splash{font-family:Georgia,serif;color:var(--gold);font-size:clamp(3rem,9vw,8rem);font-weight:700;text-shadow:5px 5px 0 #000;animation:pop .5s ease-out}
+  @keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+  .ov-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;padding-top:10px}
+  .scorebtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .sb{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);border-radius:10px;padding:4px 5px 4px 10px}
+  .sb span{font-weight:700;margin-right:4px;font-size:.95rem}
+  .sb button{width:34px;height:32px;font-size:1.2rem;font-weight:800;color:#fff}
+  .sb .plus{background:var(--good)} .sb .minus{background:var(--bad)}
+  .sb.flash{outline:3px solid var(--gold)}
+  #timer{width:min(600px,80vw);height:14px;background:rgba(0,0,0,.35);border-radius:7px;overflow:hidden;margin-top:3vh}
+  #timerFill{height:100%;width:100%;background:var(--gold);transition:width 1s linear}
+  #timerFill.low{background:#ff6b5e}
+  .ddform{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:3vh;font-size:1.1rem}
+  .ddform select,.ddform input{width:280px;font-size:1.2rem;text-align:center}
+  table.fj{border-collapse:collapse;margin-top:2vh;font-size:clamp(1rem,1.6vw,1.4rem)}
+  .fjwrap{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+  table.fj td,table.fj th{padding:5px 12px;border-bottom:1px solid rgba(255,255,255,.15)}
+  table.fj th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.75em;letter-spacing:.06em}
+  table.fj input{width:130px;text-align:center}
+  .toggle{display:flex;gap:6px}
+  .toggle button{padding:6px 14px;background:#2a3bc4;color:#fff;opacity:.55}
+  .toggle button.on.g{background:var(--good);opacity:1}
+  .toggle button.on.b{background:var(--bad);opacity:1}
+  .results ol{columns:2;column-gap:60px}
+  .results li{font-size:clamp(1.1rem,2.1vw,2rem);margin:8px 0;list-style:none;font-family:Georgia,serif}
+  .results li:first-child{color:var(--gold)}
+  .results ol{padding:0}
+  .keys{font-size:.78rem;color:var(--muted);margin-top:8px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP ================= -->
+<section id="setup">
+  <div class="setup-card">
+    <div class="letterhead"><b>E-Discovery Course</b><br>University of Florida Levin College of Law<br>Fall Semester 2026 | Professor Wm. Hamilton</div>
+    <h1>E-Discovery Jeopardy</h1>
+    <p class="sub">Review round: preservation through the Rule 26 toolkit</p>
+
+    <label for="teamCount">Number of teams</label>
+    <select id="teamCount">
+      <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option selected>10</option>
+    </select>
+    <label>Team names</label>
+    <div id="teamInputs"></div>
+
+    <div class="btn-row">
+      <button class="btn" id="startBtn">Start game</button>
+      <button class="btn secondary hidden" id="resumeBtn">Resume saved game</button>
+    </div>
+    <p class="hint">
+      Click a dollar value to open a clue. <kbd>Space</kbd> reveals the answer, <kbd>T</kbd> starts a 30-second timer,
+      <kbd>1</kbd>–<kbd>9</kbd> award the clue to that team (<kbd>0</kbd> = team 10), <kbd>Shift</kbd>+number deducts it, <kbd>Esc</kbd> returns to the board.
+      Two Daily Doubles are hidden at random. Double-click a used square to reopen it. The game saves itself in this browser if the page is refreshed.
+    </p>
+  </div>
+</section>
+
+<!-- ================= BOARD ================= -->
+<section id="game" class="hidden">
+  <div id="grid"></div>
+  <div id="bar">
+    <div id="teams" style="display:flex;gap:6px;flex:1"></div>
+    <div class="tools">
+      <button class="fj" id="fjBtn">Final Jeopardy</button>
+      <button id="undoBtn">Undo score</button>
+      <button id="newBtn">New game</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OVERLAY ================= -->
+<section id="overlay" class="hidden"></section>
+
+<script>
+/* =====================================================================
+   GAME CONTENT. Edit the clues here; nothing below this block needs to change.
+   Each category needs five clues (200 → 1000). "a" is the answer shown on
+   reveal; "note" is the teaching point shown beneath it.
+   ===================================================================== */
+const GAME = {
+  values: [200, 400, 600, 800, 1000],
+  dailyDoubles: 2,
+  categories: [
+    {
+      name: "DUTY TO PRESERVE",
+      clues: [
+        { q: "The duty to preserve attaches when a party reasonably anticipates this.",
+          a: "What is litigation?",
+          note: "Reasonable anticipation, not the filing of a complaint, is the trigger. Zubulake v. UBS Warburg LLC (Zubulake IV), 220 F.R.D. 212 (S.D.N.Y. 2003); see also the 2015 Committee Note to Rule 37(e)." },
+        { q: "This written instruction tells employees to suspend routine deletion and keep potentially relevant information.",
+          a: "What is a litigation hold (legal hold) notice?",
+          note: "The hold is the start of preservation, not the whole of it. It must reach the right custodians and also stop automated deletion." },
+        { q: "In Zubulake IV, the court found UBS's duty arose in April 2001, about four months before the plaintiff filed this.",
+          a: "What is her EEOC charge?",
+          note: "Key UBS employees recognized the likelihood of litigation months before any formal filing. The trigger is when the company knew, not when it was told." },
+        { q: "Zubulake V says issuing a hold isn't enough. Counsel must also take this ongoing step.",
+          a: "What is monitoring compliance with the hold?",
+          note: "Counsel must identify key players, talk with them directly, re-issue the hold periodically, and make sure relevant sources are actually preserved. Zubulake V, 229 F.R.D. 422 (S.D.N.Y. 2004)." },
+        { q: "March: the HR director emails, \"Darnell's going to lawyer up. Keep this quiet.\" June: a demand letter arrives. August: the complaint is filed. When did the duty attach, and what's the best evidence of it?",
+          a: "What is March, with the HR director's email as evidence?",
+          note: "Judgment call. The company's own recognition of likely litigation is strong evidence that it reasonably anticipated suit. Students who say June should explain why a demand letter is a later trigger, not the first one. This is the Palmetto Ridge pattern." }
+      ]
+    },
+    {
+      name: "CUSTODIANS & SOURCES",
+      clues: [
+        { q: "This is the term for a person who has possession, custody, or control of potentially relevant ESI.",
+          a: "What is a custodian?",
+          note: "Custodian mapping comes first in scoping. The hold list, the collection plan, and the Rule 26(f) discussion all build on it." },
+        { q: "The Eleventh Circuit defines Rule 34 \"control\" as the legal right to do this on demand.",
+          a: "What is obtain the documents?",
+          note: "Searock v. Stripling, 736 F.2d 650 (11th Cir. 1984). Other circuits use a broader \"practical ability\" test, so ask which test your court applies." },
+        { q: "This person isn't a fact witness but can switch off the 90-day auto-delete, so they need a hold notice too.",
+          a: "Who is the IT or system administrator?",
+          note: "Hold notices sent only to fact witnesses miss the people who control retention settings. Module 2A treats IT as a custodian category of its own." },
+        { q: "Courts are increasingly unforgiving when employees keep using these auto-deleting apps after the duty to preserve attaches.",
+          a: "What are ephemeral messaging apps (e.g., Signal, disappearing-message settings)?",
+          note: "Turning on disappearing messages after the trigger looks like a failure to take reasonable steps under Rule 37(e). Disabling them belongs on the hold checklist." },
+        { q: "A sales manager used the company's licensed generative AI tool to draft the plaintiff's performance reviews. Are the prompts and outputs ESI to preserve, and who besides the manager gets the hold?",
+          a: "What is yes, they are ESI; and the IT admin and the AI vendor/platform administrator?",
+          note: "Judgment call. Prompts and outputs are ESI if relevant. Retention is usually set at the enterprise admin level or by the vendor, so preservation means reaching whoever controls those settings. That's the AI disclosure stage of Module 2A." }
+      ]
+    },
+    {
+      name: "RULE 37(e)",
+      clues: [
+        { q: "Rule 37(e) applies only to the loss of this kind of information.",
+          a: "What is electronically stored information (ESI)?",
+          note: "Loss of tangible evidence is still governed by the court's inherent authority and the forum's spoliation law." },
+        { q: "The current version of Rule 37(e) took effect in this year.",
+          a: "What is 2015?",
+          note: "The 2015 amendments replaced the old safe harbor and brought proportionality into Rule 26(b)(1)." },
+        { q: "Rule 37(e) applies only if ESI that should have been preserved was lost, the party failed to take reasonable steps, and the ESI cannot be this.",
+          a: "What is restored or replaced through additional discovery?",
+          note: "If the texts can be recovered from a backup or another custodian's phone, the rule's remedies never come into play. Look for replacement before arguing sanctions." },
+        { q: "Under 37(e)(1), the court must find this before ordering measures no greater than necessary to cure it.",
+          a: "What is prejudice to another party?",
+          note: "Remedies under (e)(1) are curative: more discovery, fees, or letting the jury hear about the loss. No intent finding is required." },
+        { q: "A custodian wipes her phone a week after the hold notice and says she was just upgrading. The plaintiff wants an adverse-inference instruction. What must the court find, and is gross negligence enough?",
+          a: "What is intent to deprive another party of the information's use? And no, gross negligence is not enough.",
+          note: "Rule 37(e)(2) deliberately rejected Residential Funding Corp. v. DeGeorge Financial Corp., 306 F.3d 99 (2d Cir. 2002), which allowed an adverse inference on a showing of negligence. The timing and the excuse go to whether intent can be inferred." }
+      ]
+    },
+    {
+      name: "HASHES & METADATA",
+      clues: [
+        { q: "This value is often called a file's \"digital fingerprint.\"",
+          a: "What is a hash value?",
+          note: "Identical contents produce an identical hash. It's how review platforms deduplicate and how collection integrity is proved." },
+        { q: "An MD5 hash is this many bits long, written as 32 hexadecimal characters.",
+          a: "What is 128?",
+          note: "SHA-1 is 160 bits and SHA-256 is 256. MD5 has known collision weaknesses but is still common for deduplication. Try it in the Hashing Workbench." },
+        { q: "Renaming a file doesn't change its hash, because the file name is this kind of metadata, stored outside the file's contents.",
+          a: "What is system (file system) metadata?",
+          note: "Change one character inside the document and the hash changes completely. Change the name and it doesn't." },
+        { q: "A Word document's \"Author\" field lives here, in an XML file named core.xml inside the zipped .docx.",
+          a: "What is application metadata (docProps/core.xml)?",
+          note: "A .docx is a ZIP archive. The Workbench opens it to read core.xml, which is why authorship can survive copying and emailing." },
+        { q: "To \"collect\" the client's files, a paralegal drags them onto a thumb drive. Name two things that just went wrong and one thing that didn't.",
+          a: "What is: the copies' system dates (e.g., created dates) may change and there's no defensible chain of custody; but the content hash doesn't change?",
+          note: "Judgment call. Self-collection by drag-and-drop puts system metadata at risk and leaves no record of how the files were collected. Content integrity can still be checked by hashing the originals and the copies." }
+      ]
+    },
+    {
+      name: "RULE 26 & 502(d)",
+      clues: [
+        { q: "Since 2015, discoverable information must be relevant to a claim or defense and this.",
+          a: "What is proportional to the needs of the case?",
+          note: "Rule 26(b)(1) lists the factors: importance of the issues, amount in controversy, relative access to information, resources, importance of the discovery, and burden versus benefit." },
+        { q: "At this conference, parties must discuss preserving discoverable information and the form of ESI production.",
+          a: "What is the Rule 26(f) conference?",
+          note: "This is where the ESI protocol gets negotiated. Recall the Solandra exercise." },
+        { q: "Old backup tapes are the classic example of sources this rule says need not be searched without a court order for good cause.",
+          a: "What is Rule 26(b)(2)(B), for sources not reasonably accessible because of undue burden or cost?",
+          note: "\"Not reasonably accessible\" doesn't mean you can stop preserving them. The burden-and-cost showing falls on the party resisting discovery." },
+        { q: "With this court order in place, producing a privileged document is not a waiver in this case or in any other federal or state proceeding.",
+          a: "What is a Federal Rule of Evidence 502(d) order?",
+          note: "Many judges will enter one on request at the outset of the case. Ask for it at the 26(f) conference." },
+        { q: "Opposing counsel says, \"We don't need a 502(d) order. 502(b) already protects inadvertent disclosure.\" Why push back?",
+          a: "What is that 502(b) requires proving inadvertence, reasonable steps to prevent disclosure, and prompt rectification, while 502(d) protects regardless of care?",
+          note: "Judgment call. Under 502(b) you have to litigate whether your review was reasonable. Under 502(d) you don't. A 502(d) order also lets the parties agree to a quicker, cheaper privilege review." }
+      ]
+    },
+    {
+      name: "FLORIDA SPIN",
+      clues: [
+        { q: "Florida's safe harbor for ESI lost through the \"routine, good-faith operation of an electronic information system\" is in subdivision (e) of this rule.",
+          a: "What is Florida Rule of Civil Procedure 1.380?",
+          note: "Florida kept the language of the pre-2015 federal safe harbor. Florida has no counterpart to the federal Rule 37(e)(2) intent framework." },
+        { q: "The 2025 amendments to Florida Rule 1.280 adopted this federal limit on the scope of discovery.",
+          a: "What is proportionality?",
+          note: "Effective January 1, 2025, Florida's scope of discovery mirrors the federal \"relevant and proportional\" standard." },
+        { q: "Also effective in 2025, Florida now requires parties to make these without waiting for a discovery request.",
+          a: "What are initial disclosures?",
+          note: "Initial disclosures include witnesses, documents and ESI, damages computations, and insurance. Florida practice now looks much more like federal practice early in a case." },
+        { q: "In Martino v. Wal-Mart Stores (Fla. 2005), the Florida Supreme Court refused to recognize this independent cause of action against a party to the case.",
+          a: "What is first-party spoliation of evidence?",
+          note: "Martino v. Wal-Mart Stores, Inc., 908 So. 2d 342 (Fla. 2005). The remedies lie within the case itself: sanctions, adverse inferences, and presumptions." },
+        { q: "In this 1987 Florida Supreme Court case, a hospital's missing surgical records led to a rebuttable presumption of negligence.",
+          a: "What is Public Health Trust of Dade County v. Valcin?",
+          note: "Valcin, 507 So. 2d 596 (Fla. 1987). If the missing records keep a plaintiff from establishing a prima facie case, Florida courts may shift the burden to the party that lost them. Compare that with the federal intent requirement for ESI." }
+      ]
+    }
+  ],
+  final: {
+    category: "Judgment Call",
+    q: "Monday: the complaint is served. Tuesday night: the CEO's phone auto-deletes 30 days of texts. Wednesday the CEO tells you, \"Nobody needs to know.\" What are your next three moves?",
+    a: "(1) Stop the auto-delete and confirm the hold is in place; (2) try to restore or replace the texts from backups, the carrier, or other custodians' devices; (3) don't conceal the loss: disclose it accurately in discovery.",
+    note: "If the texts are replaced, Rule 37(e) never applies. Concealing the loss implicates Fla. R. Prof. Conduct 4-3.4(a), which bars unlawfully obstructing access to evidence or concealing it, as well as the duty of candor. Give credit for any defensible three-step plan."
+  }
+};
+/* ===================== END OF CONTENT ===================== */
+
+const SAVE_KEY = "edisc-jeopardy-fall26-v1";
+let S = null;   // game state
+const $ = id => document.getElementById(id);
+
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){} }
+function loadSaved(){ try{ return JSON.parse(localStorage.getItem(SAVE_KEY)); }catch(e){ return null; } }
+function clearSaved(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+/* ---------- Setup ---------- */
+function renderTeamInputs(){
+  const n = +$("teamCount").value, box = $("teamInputs");
+  const old = [...box.querySelectorAll("input")].map(i => i.value);
+  box.innerHTML = "";
+  for(let i=0;i<n;i++){
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.value = old[i] || ("Team " + (i+1)); inp.maxLength = 24;
+    box.appendChild(inp);
+  }
+}
+$("teamCount").onchange = renderTeamInputs;
+renderTeamInputs();
+if(loadSaved()) $("resumeBtn").classList.remove("hidden");
+
+function pickDailyDoubles(){
+  const pool = [];
+  GAME.categories.forEach((c,ci) => GAME.values.forEach((v,ri) => { if(ri>0) pool.push(ci+"-"+ri); }));
+  const out = [];
+  while(out.length < GAME.dailyDoubles && pool.length){
+    const k = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+    if(!out.some(o => o.split("-")[0] === k.split("-")[0])) out.push(k); // one per category
+  }
+  return out;
+}
+
+$("startBtn").onclick = () => {
+  const names = [...$("teamInputs").querySelectorAll("input")].map((i,n) => i.value.trim() || ("Team "+(n+1)));
+  S = { teams: names.map(n => ({name:n, score:0})), used: [], dd: pickDailyDoubles(), history: [] };
+  save(); showBoard();
+};
+$("resumeBtn").onclick = () => { S = loadSaved(); if(S) showBoard(); };
+
+/* ---------- Board ---------- */
+function showBoard(){
+  $("setup").classList.add("hidden");
+  $("overlay").classList.add("hidden");
+  $("game").classList.remove("hidden");
+  const g = $("grid"), C = GAME.categories.length;
+  g.style.gridTemplateColumns = `repeat(${C},1fr)`;
+  g.style.gridTemplateRows = `1.15fr repeat(${GAME.values.length},1fr)`;
+  g.innerHTML = "";
+  GAME.categories.forEach(c => { const d = document.createElement("div"); d.className="cat"; d.textContent=c.name; g.appendChild(d); });
+  GAME.values.forEach((v,ri) => GAME.categories.forEach((c,ci) => {
+    const k = ci+"-"+ri, b = document.createElement("button");
+    b.className = "tile" + (S.used.includes(k) ? " used" : "");
+    b.textContent = "$" + v;
+    b.onclick = () => { if(!S.used.includes(k)) openClue(ci,ri); };
+    b.ondblclick = () => { if(S.used.includes(k)){ S.used = S.used.filter(x=>x!==k); save(); openClue(ci,ri); } };
+    g.appendChild(b);
+  }));
+  renderTeams();
+}
+
+function renderTeams(){
+  const box = $("teams"); box.innerHTML = "";
+  S.teams.forEach((t,i) => {
+    const d = document.createElement("div"); d.className = "team";
+    d.innerHTML = `<div class="adj"><button title="−100">−</button><button title="+100">+</button></div>
+      <div class="nm">${i+1}. ${esc(t.name)}</div><div class="sc ${t.score<0?"neg":""}">${fmt(t.score)}</div>`;
+    const [m,p] = d.querySelectorAll(".adj button");
+    m.onclick = () => adjust(i,-100,null); p.onclick = () => adjust(i,100,null);
+    box.appendChild(d);
+  });
+}
+
+function adjust(team, delta, tile){
+  S.teams[team].score += delta;
+  S.history.push({team, delta, tile});
+  save(); renderTeams(); renderOverlayScores();
+}
+$("undoBtn").onclick = () => {
+  const h = S.history.pop(); if(!h) return;
+  S.teams[h.team].score -= h.delta; save(); renderTeams();
+};
+$("newBtn").onclick = () => {
+  if(confirmInline("newBtn")){ clearSaved(); location.reload(); }
+};
+function confirmInline(id){ // two-click confirm, no browser dialog
+  const b = $(id);
+  if(b.dataset.armed){ return true; }
+  b.dataset.armed = "1"; const t = b.textContent; b.textContent = "Click again to reset";
+  setTimeout(()=>{ delete b.dataset.armed; b.textContent = t; }, 3000);
+  return false;
+}
+
+/* ---------- Clue view ---------- */
+let cur = null, timerId = null;
+
+function openClue(ci, ri){
+  const k = ci+"-"+ri;
+  cur = { ci, ri, k, value: GAME.values[ri], clue: GAME.categories[ci].clues[ri], revealed:false, dd: S.dd.includes(k), ddTeam:null, ddWager:0 };
+  if(!S.used.includes(k)) S.used.push(k);
+  save();
+  const ov = $("overlay"); ov.classList.remove("hidden");
+  if(cur.dd) renderDDSplash(); else renderClue();
+}
+
+function head(){
+  return `<div class="ov-head"><span>${esc(GAME.categories[cur.ci].name)}</span>
+    <span class="val">${cur.dd ? "Daily Double · " + fmt(cur.ddWager) : "$"+cur.value}</span></div>`;
+}
+
+function renderDDSplash(){
+  const maxW = S.teams.map(t => Math.max(t.score, Math.max(...GAME.values)));
+  $("overlay").innerHTML = `${head()}
+    <div class="ov-body"><div class="splash">DAILY DOUBLE!</div>
+      <div class="ddform">
+        <select id="ddTeam">${S.teams.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join("")}</select>
+        <input type="number" id="ddWager" min="5" step="100" placeholder="Wager">
+        <div id="ddMax" style="color:var(--muted);font-size:.9rem"></div>
+        <button class="btn" id="ddGo">Show clue</button>
+      </div></div>
+    <div class="ov-foot"><button class="btn secondary" onclick="closeClue()">Back to board (Esc)</button></div>`;
+  const upd = () => $("ddMax").textContent = "Maximum wager: " + fmt(maxW[+$("ddTeam").value]);
+  $("ddTeam").onchange = upd; upd();
+  $("ddGo").onclick = () => {
+    const t = +$("ddTeam").value; let w = Math.round(+$("ddWager").value || 0);
+    w = Math.max(5, Math.min(w, maxW[t]));
+    cur.ddTeam = t; cur.ddWager = w; renderClue();
+  };
+}
+
+function renderClue(){
+  const c = cur.clue;
+  const scoring = cur.dd
+    ? `<div class="scorebtns"><div class="sb"><span>${esc(S.teams[cur.ddTeam].name)}</span>
+         <button class="plus" onclick="ddScore(true)">✓</button><button class="minus" onclick="ddScore(false)">✗</button></div></div>`
+    : `<div class="scorebtns" id="scoreBtns"></div>`;
+  $("overlay").innerHTML = `${head()}
+    <div class="ov-body">
+      <div class="clue">${esc(c.q)}</div>
+      <div id="timer" class="hidden"><div id="timerFill"></div></div>
+      <div class="answer ${cur.revealed?"":"hidden"}" id="ans">
+        <div class="a">${esc(c.a)}</div>
+        ${c.note ? `<div class="note">${esc(c.note)}</div>` : ""}
+      </div>
+    </div>
+    <div class="ov-foot">
+      ${scoring}
+    </div>
+    <div class="ov-foot">
+      <button class="btn secondary" onclick="startTimer(30)">Timer (T)</button>
+      <button class="btn" onclick="reveal()">Reveal answer (Space)</button>
+      <button class="btn secondary" onclick="closeClue()">Back to board (Esc)</button>
+    </div>`;
+  renderOverlayScores();
+}
+
+function renderOverlayScores(){
+  const box = $("scoreBtns"); if(!box || !cur) return;
+  box.innerHTML = "";
+  S.teams.forEach((t,i) => {
+    const d = document.createElement("div"); d.className = "sb";
+    d.innerHTML = `<span>${i+1}. ${esc(t.name)} · ${fmt(t.score)}</span><button class="plus" title="Correct">+</button><button class="minus" title="Incorrect">−</button>`;
+    const [p,m] = d.querySelectorAll("button");
+    p.onclick = () => { adjust(i, cur.value, cur.k); flash(i); };
+    m.onclick = () => { adjust(i, -cur.value, cur.k); flash(i); };
+    box.appendChild(d);
+  });
+}
+function flash(i){ const el = $("scoreBtns")?.children[i]; if(el){ el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),500);} }
+
+function ddScore(right){
+  adjust(cur.ddTeam, right ? cur.ddWager : -cur.ddWager, cur.k);
+  if(!cur.revealed) reveal();
+}
+
+function reveal(){
+  if(!cur) return; cur.revealed = true;
+  const a = $("ans"); if(a) a.classList.remove("hidden");
+  stopTimer();
+}
+function closeClue(){ stopTimer(); cur = null; showBoard(); }
+
+/* ---------- Timer ---------- */
+function startTimer(sec){
+  stopTimer();
+  const wrap = $("timer"), fill = $("timerFill"); if(!wrap) return;
+  wrap.classList.remove("hidden"); fill.classList.remove("low");
+  fill.style.transition = "none"; fill.style.width = "100%";
+  let left = sec;
+  requestAnimationFrame(()=>{ fill.style.transition = "width 1s linear"; });
+  timerId = setInterval(() => {
+    left--; fill.style.width = (left/sec*100) + "%";
+    if(left <= 5) fill.classList.add("low");
+    if(left <= 0){ stopTimer(); beep(); }
+  }, 1000);
+}
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId = null; } }
+/* Loud "time's up" buzzer. The audio context is unlocked on the first click,
+   because browsers block sound that starts without a user gesture. */
+let AC = null;
+function audio(){
+  try{
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state === "suspended") AC.resume();
+  }catch(e){}
+  return AC;
+}
+document.addEventListener("pointerdown", audio, {once:false});
+document.addEventListener("keydown", audio);
+
+function beep(){ buzzer(); flashScreen(); }
+function buzzer(){
+  const ctx = audio(); if(!ctx) return;
+  try{
+    const t0 = ctx.currentTime + 0.02, dur = 1.4;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -6; comp.ratio.value = 4;
+    const master = ctx.createGain(); master.gain.value = 0.9;
+    master.connect(comp); comp.connect(ctx.destination);
+    // Two detuned harsh oscillators an octave apart give the classic buzzer rasp
+    [[110,"sawtooth"],[116,"square"],[220,"sawtooth"]].forEach(([f,type]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.5, t0 + 0.02);
+      g.gain.setValueAtTime(0.5, t0 + dur - 0.08);
+      g.gain.linearRampToValueAtTime(0, t0 + dur);
+      o.connect(g); g.connect(master);
+      o.start(t0); o.stop(t0 + dur + 0.05);
+    });
+  }catch(e){}
+}
+function flashScreen(){
+  const ov = $("overlay"); if(!ov) return;
+  ov.animate([{background:"#c8352e"},{background:"var(--board)"},{background:"#c8352e"},{background:"var(--board)"}],{duration:1400});
+}
+
+/* ---------- Final Jeopardy ---------- */
+let FJ = null;
+$("fjBtn").onclick = () => {
+  FJ = { stage:"wager", wagers: S.teams.map(()=>0), right: S.teams.map(()=>null) };
+  $("overlay").classList.remove("hidden"); renderFJ();
+};
+
+function renderFJ(){
+  const F = GAME.final, ov = $("overlay");
+  const top = `<div class="ov-head"><span>Final Jeopardy</span><span class="val">${esc(F.category)}</span></div>`;
+  if(FJ.stage === "wager"){
+    ov.innerHTML = `${top}<div class="ov-body">
+      <div class="splash" style="font-size:clamp(2.4rem,6vw,5.5rem)">${esc(F.category)}</div>
+      <p style="color:var(--muted);margin-top:2vh">Teams write their wagers on paper. Enter them here (up to each team's score; teams at zero or below wager 0).</p>
+      ${fjTables(["Team","Score","Wager"], (t,i)=>`<td>${esc(t.name)}</td><td>${fmt(t.score)}</td>
+        <td><input type="number" min="0" max="${Math.max(0,t.score)}" data-i="${i}" value="0"></td>`)}</div>
+      <div class="ov-foot"><button class="btn" id="fjShow">Show the clue</button>
+      <button class="btn secondary" onclick="FJ=null;showBoard()">Back to board</button></div>`;
+    $("fjShow").onclick = () => {
+      ov.querySelectorAll("input[data-i]").forEach(inp => {
+        const i = +inp.dataset.i; FJ.wagers[i] = Math.max(0, Math.min(Math.round(+inp.value||0), Math.max(0,S.teams[i].score)));
+      });
+      FJ.stage = "clue"; renderFJ();
+    };
+  } else if(FJ.stage === "clue" || FJ.stage === "judge"){
+    const judging = FJ.stage === "judge";
+    ov.innerHTML = `${top}<div class="ov-body">
+      <div class="clue ${judging?"small":""}">${esc(F.q)}</div>
+      <div id="timer" class="hidden"><div id="timerFill"></div></div>
+      ${judging ? `<div class="answer small"><div class="a">${esc(F.a)}</div><div class="note">${esc(F.note)}</div></div>
+        ${fjTables(["Team","Wager","Ruling"], (t,i)=>`<td>${esc(t.name)}</td><td>${fmt(FJ.wagers[i])}</td><td><div class="toggle">
+          <button class="g ${FJ.right[i]===true?"on":""}" onclick="FJ.right[${i}]=true;renderFJ()">Correct</button>
+          <button class="b ${FJ.right[i]===false?"on":""}" onclick="FJ.right[${i}]=false;renderFJ()">Incorrect</button></div></td>`)}` : ""}
+      </div>
+      <div class="ov-foot">
+        ${judging ? `<button class="btn" id="fjApply">Apply and show final standings</button>`
+                  : `<button class="btn secondary" onclick="startTimer(60)">60-second clock (T)</button>
+                     <button class="btn" onclick="FJ.stage='judge';stopTimer();renderFJ()">Reveal answer (Space)</button>`}
+      </div>`;
+    const ap = $("fjApply");
+    if(ap) ap.onclick = () => {
+      S.teams.forEach((t,i) => { if(FJ.right[i]!==null && FJ.wagers[i]) adjust(i, FJ.right[i] ? FJ.wagers[i] : -FJ.wagers[i], "final"); });
+      FJ.stage = "done"; renderFJ();
+    };
+  } else {
+    const ranked = S.teams.map(t=>t).sort((a,b)=>b.score-a.score);
+    ov.innerHTML = `${top}<div class="ov-body">
+      <div class="splash" style="font-size:clamp(2.4rem,6vw,5.5rem)">Final Standings</div>
+      <div class="results"><ol>${ranked.map(t=>`<li>${esc(t.name)} · ${fmt(t.score)}</li>`).join("")}</ol></div></div>
+      <div class="ov-foot"><button class="btn secondary" onclick="FJ=null;showBoard()">Back to board</button></div>`;
+  }
+}
+
+/* ---------- Keyboard ---------- */
+document.addEventListener("keydown", e => {
+  if(e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+  const ovOpen = !$("overlay").classList.contains("hidden");
+  if(!ovOpen) return;
+  if(FJ){
+    if(e.key === "t" || e.key === "T"){ startTimer(60); }
+    if(e.key === " " && FJ.stage === "clue"){ e.preventDefault(); FJ.stage = "judge"; stopTimer(); renderFJ(); }
+    if(e.key === "Escape" && FJ.stage !== "judge"){ FJ = null; showBoard(); }
+    return;
+  }
+  if(!cur) return;
+  if(e.key === "Escape"){ closeClue(); return; }
+  if(e.key === " "){ e.preventDefault(); reveal(); return; }
+  if(e.key === "t" || e.key === "T"){ startTimer(30); return; }
+  const m = e.code.match(/^Digit([0-9])$/);
+  if(m && !cur.dd){
+    const i = m[1]==="0" ? 9 : +m[1]-1; if(i >= S.teams.length) return;
+    adjust(i, e.shiftKey ? -cur.value : cur.value, cur.k); flash(i);
+  }
+});
+
+/* ---------- Helpers ---------- */
+function fjTables(heads, rowFn){
+  const idx = S.teams.map((t,i)=>i), n = idx.length;
+  const groups = n > 5 ? [idx.slice(0, Math.ceil(n/2)), idx.slice(Math.ceil(n/2))] : [idx];
+  return `<div class="fjwrap">` + groups.map(g => `<table class="fj"><tr>${heads.map(h=>`<th>${h}</th>`).join("")}</tr>
+    ${g.map(i => `<tr>${rowFn(S.teams[i], i)}</tr>`).join("")}</table>`).join("") + `</div>`;
+}
+function fmt(n){ return (n<0?"−$":"$") + Math.abs(n).toLocaleString(); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+</script>
+</body>
+</html>
