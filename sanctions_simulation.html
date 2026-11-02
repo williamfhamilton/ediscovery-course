@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost Text Messages and Rule 37(e) Sanctions — Tidewater Pallet Co.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f5f4f0;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  .letterhead {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+  .letterhead b { color: #555; }
+
+  .top-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .sub-title { font-size: 16px; color: #666; margin-bottom: 2rem; }
+
+  .standard-box {
+    background: #fff;
+    border: 1px solid #dde8f5;
+    border-left: 4px solid #2E75B6;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .standard-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #2E75B6;
+    margin-bottom: 6px;
+  }
+  .standard-box p { font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box p + p { margin-top: 8px; }
+  .standard-box ol { margin: 8px 0 0 1.3rem; font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box ol li + li { margin-top: 4px; }
+
+  .progress-wrap { display: flex; gap: 6px; margin-bottom: 1.5rem; align-items: center; }
+  .pip { height: 5px; flex: 1; border-radius: 3px; background: #ddd; transition: background 0.35s; }
+  .pip.done { background: #639922; }
+  .pip.active { background: #2E75B6; }
+
+  .stage-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .stage-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; flex-shrink: 0;
+  }
+  .stage-num.active { background: #dbeafe; color: #1d4ed8; }
+  .stage-num.done   { background: #dcfce7; color: #166534; font-size: 18px; }
+  .stage-title-wrap { flex: 1; }
+  .stage-title { font-size: 17px; font-weight: 600; color: #111; }
+  .stage-meta  { font-size: 12px; color: #999; margin-top: 1px; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .tag-neutral { background: #f0f0f0; color: #555; }
+  .tag-warn    { background: #fff3cd; color: #7c5a00; }
+  .tag-alert   { background: #fde8e8; color: #8b1a1a; }
+
+  .stage-body { font-size: 15px; color: #333; line-height: 1.7; margin-bottom: 1rem; }
+  .stage-body p + p { margin-top: 10px; }
+
+  .doc-block {
+    background: #f8f9fa;
+    border-left: 4px solid #aac4de;
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.85rem 0;
+    font-size: 13.5px;
+    font-style: italic;
+    color: #444;
+    line-height: 1.65;
+  }
+  .doc-block .src {
+    display: block; font-style: normal; font-weight: 600;
+    font-size: 11.5px; letter-spacing: 0.03em; color: #6b7f94; margin-bottom: 4px;
+  }
+  .doc-block .ln { display: block; }
+  .doc-block .ln + .ln { margin-top: 3px; }
+
+  .discuss-box {
+    background: #fffbf0;
+    border: 1px solid #f0d080;
+    border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-top: 0.85rem;
+  }
+  .discuss-box .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #a07000; margin-bottom: 5px;
+  }
+  .discuss-box .dtext { font-size: 14px; color: #4a3200; line-height: 1.6; }
+
+  .verdict-section { margin-top: 1.1rem; }
+  .verdict-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #888; margin-bottom: 8px;
+  }
+  .verdict-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  .vbtn {
+    flex: 1; min-width: 120px; padding: 9px 12px;
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    border: 1.5px solid #ccc; border-radius: 8px;
+    background: #fff; color: #555; cursor: pointer; transition: all 0.15s;
+  }
+  .vbtn:hover { background: #f5f5f5; }
+  .vbtn.sel-0 { background: #f0fbe8; border-color: #5a9216; color: #2a5a00; font-weight: 600; }
+  .vbtn.sel-1 { background: #fff8ec; border-color: #c8900a; color: #6b4400; font-weight: 600; }
+  .vbtn.sel-2 { background: #f0eeff; border-color: #7060cc; color: #3a2a8a; font-weight: 600; }
+  .vbtn.sel-3 { background: #eaf3fc; border-color: #2E75B6; color: #12426e; font-weight: 600; }
+  .vbtn.sel-4 { background: #fdeeee; border-color: #c24a4a; color: #7a1f1f; font-weight: 600; }
+
+  .advance-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; font-family: inherit; font-size: 14px; font-weight: 600;
+    background: #2E75B6; color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+  .advance-btn:hover  { background: #1a5a9a; }
+  .advance-btn:active { transform: scale(0.97); }
+  .advance-btn.reveal { background: #7c3aed; }
+  .advance-btn.reveal:hover { background: #6025cc; }
+
+  .outcome-card {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-left: 4px solid #dc2626;
+    border-radius: 0 10px 10px 0;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .outcome-card .otitle { font-size: 16px; font-weight: 700; color: #7f1d1d; margin-bottom: 4px; }
+  .outcome-card .onote { font-size: 12.5px; color: #8b3a3a; margin-bottom: 12px; font-style: italic; }
+  .outcome-card p { font-size: 14.5px; color: #450a0a; line-height: 1.7; margin-bottom: 10px; }
+  .outcome-card p:last-child { margin-bottom: 0; }
+
+  .compare-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .compare-card .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #888; margin-bottom: 10px;
+  }
+  .compare-row {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 10px;
+    padding: 8px 0; border-top: 1px solid #eee; font-size: 13.5px; line-height: 1.45;
+  }
+  .compare-row.head { border-top: none; padding-top: 0; font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.05em; text-transform: uppercase; }
+  .compare-row .you.match { color: #166534; font-weight: 600; }
+  .compare-row .you.miss  { color: #7c5a00; font-weight: 600; }
+  .compare-row .you.none  { color: #aaa; }
+  .compare-row .court { color: #333; font-weight: 600; }
+
+  .debrief-card {
+    background: #f8f8f8; border: 1px solid #e0e0e0;
+    border-radius: 10px; padding: 1.25rem 1.4rem;
+  }
+  .debrief-card .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #888; margin-bottom: 10px;
+  }
+  .debrief-card ol { padding-left: 1.4rem; }
+  .debrief-card li { font-size: 14px; color: #333; line-height: 1.65; margin-bottom: 10px; }
+  .debrief-card li:last-child { margin-bottom: 0; }
+
+  .restart-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 1.5rem; padding: 9px 18px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    background: #fff; color: #555; border: 1.5px solid #ccc;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #f0f0f0; }
+
+  button:focus-visible { outline: 3px solid #2E75B6; outline-offset: 2px; }
+
+  @media (max-width: 600px) {
+    .main-title { font-size: 24px; }
+    .vbtn { min-width: 90px; font-size: 13px; }
+    .compare-row { grid-template-columns: 1fr; gap: 2px; }
+    .compare-row.head { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-card { animation: none; }
+    .pip, .vbtn, .advance-btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="letterhead"><b>E-Discovery Course</b><br>University of Florida Levin College of Law<br>Fall Semester 2026 | Professor Wm. Hamilton</div>
+
+  <div class="top-label">Electronic Discovery &mdash; Module 3: Sanctions</div>
+  <div class="main-title">Lost text messages and Rule 37(e)</div>
+  <div class="sub-title"><em>Bayshore Provisions v. Tidewater Pallet Co., et al.</em> &mdash; Price-Fixing Scenario</div>
+
+  <div class="standard-box">
+    <div class="label">The legal standard &mdash; Federal Rule of Civil Procedure 37(e)</div>
+    <p>Rule 37(e) governs the loss of electronically stored information (ESI) that should have been preserved for litigation. Before the court may act at all, four things must be true:</p>
+    <ol>
+      <li>The ESI should have been preserved in anticipation or conduct of litigation.</li>
+      <li>The ESI is lost.</li>
+      <li>It was lost because a party failed to take reasonable steps to preserve it.</li>
+      <li>It cannot be restored or replaced through additional discovery.</li>
+    </ol>
+    <p>If all four are met, the rule offers two tiers of response. <strong>Under (e)(1)</strong>, on a finding of prejudice to another party, the court may order measures no greater than necessary to cure the prejudice. <strong>Under (e)(2)</strong>, only on a finding that the party acted with the intent to deprive another party of the information&rsquo;s use in the litigation, the court may presume the lost information was unfavorable, instruct the jury that it may or must make that presumption, or dismiss the action or enter default judgment.</p>
+    <p>Negligence, even gross negligence, will not support the harshest sanctions. Intent is the line.</p>
+  </div>
+
+  <div class="standard-box" style="border-left-color: #888; border-color: #e8e8e8;">
+    <div class="label" style="color: #666;">Background</div>
+    <p><strong>The case:</strong> A putative class of direct purchasers, led by Bayshore Provisions, a Gulf Coast food distributor, sues three Southeast wooden-pallet manufacturers under Section 1 of the Sherman Act. The complaint alleges they agreed to fix pallet prices over roughly two years. The case is pending in the Middle District of Florida.</p>
+    <p><strong>Your client:</strong> Tidewater Pallet Co., a Jacksonville manufacturer with about 450 employees. The co-defendants are Gulf Coast Pallet and Southern Crate.</p>
+    <p><strong>The people:</strong> <strong>Gary Pruitt</strong>, Tidewater&rsquo;s VP of Sales, who uses his own iPhone for work under a bring-your-own-device policy. <strong>Lena Marsh</strong>, Tidewater&rsquo;s CEO, who has a company-issued phone. <strong>Anita Voss</strong>, Tidewater&rsquo;s general counsel. <strong>Hal Brennan</strong>, Gulf Coast&rsquo;s head of sales and Pruitt&rsquo;s longtime industry contact.</p>
+    <p>Each defendant keeps its own texts on its own phones, so no single custodian holds the whole story.</p>
+  </div>
+
+  <div class="progress-wrap" id="pips"></div>
+  <div id="stages"></div>
+
+</div>
+
+<script>
+const stages = [
+  {
+    num: "1", date: "September 8", title: "A rumor in the trade press",
+    tag: "neutral", tagLabel: "Industry news",
+    body: [
+      "A trade publication reports that the Department of Justice&rsquo;s Antitrust Division has subpoenaed &ldquo;at least one major Southeast pallet manufacturer&rdquo; in a pricing investigation. Tidewater is not named, and no one has contacted Tidewater. General Counsel Anita Voss forwards the article to CEO Lena Marsh.",
+      "Separately, VP of Sales Gary Pruitt texts with Gulf Coast&rsquo;s Hal Brennan about once a week on his personal iPhone. Since 2023 that phone has been set to delete messages after 30 days. Pruitt chose the setting to save storage space, long before any of this."
+    ],
+    docs: [
+      { src: "Email, Voss to Marsh, September 8", lines: ["&ldquo;Saw the trade piece on DOJ and pallets. Probably nothing, but let&rsquo;s all be careful what we say in writing.&rdquo;"] }
+    ],
+    discuss: "Has the duty to preserve attached? Voss&rsquo;s email shows someone at Tidewater was thinking about the issue, but nobody has contacted Tidewater. What would a reasonable company in Tidewater&rsquo;s position have foreseen? And if the 30-day auto-delete erases texts this month, is that a problem?",
+    questions: [
+      { label: "On September 8, has the duty to preserve attached?",
+        options: [ {id:"yes", t:"Yes, attached"}, {id:"no", t:"Not yet"}, {id:"arg", t:"Arguable"} ],
+        court: "no", courtText: "Not yet" }
+    ]
+  },
+  {
+    num: "2", date: "October 20", title: "The complaint is served",
+    tag: "warn", tagLabel: "Class action",
+    body: [
+      "Tidewater is served with the Bayshore Provisions complaint, which names Tidewater, Gulf Coast Pallet, and Southern Crate as participants in a price-fixing agreement.",
+      "Voss issues a litigation hold to five executives, including Marsh and Pruitt. The notice covers email and shared-drive documents. It does not mention text messages, personal phones, or messaging apps. IT is not copied, and no one talks with Pruitt about his phone. Each recipient clicks &ldquo;acknowledge.&rdquo;",
+      "Pruitt&rsquo;s phone keeps deleting messages after 30 days. Marsh&rsquo;s company-issued phone has a similar setting, and IT has never turned on retention or backup for texts."
+    ],
+    docs: [
+      { src: "Litigation hold notice, October 20 (excerpt)", lines: ["&ldquo;Please preserve all email and documents, including files on the shared drive, relating to pricing, customers, and communications with competitors from January 1, 2024 to the present. Please reply to confirm that you have received this notice.&rdquo;"] }
+    ],
+    discuss: "The duty has now plainly attached. Did Tidewater take reasonable steps? Who was missing from the hold list? Does it matter that Pruitt&rsquo;s phone is his own and not company-issued? What should Voss have asked Pruitt on October 20?",
+    questions: [
+      { label: "Did Tidewater take reasonable steps to preserve text messages?",
+        options: [ {id:"yes", t:"Yes"}, {id:"no", t:"No"}, {id:"arg", t:"Arguable"} ],
+        court: "no", courtText: "No" }
+    ]
+  },
+  {
+    num: "3", date: "November 20 &amp; December 2", title: "The phone and the Signal thread",
+    tag: "alert", tagLabel: "Loss of ESI",
+    body: [
+      "<strong>November 20.</strong> Pruitt trades in his iPhone for a newer model at his carrier&rsquo;s store. He declines the data transfer, so the old messages do not move to the new phone. Because the auto-delete setting was never changed, the old phone had been erasing messages older than 30 days every day since October 20. By the trade-in, every message Pruitt had sent or received before October 21 was already gone.",
+      "<strong>December 2.</strong> Pruitt texts Marsh from the new phone and moves their conversation to Signal with disappearing messages turned on. Marsh agrees. Both are recipients of the October 20 hold."
+    ],
+    docs: [
+      { src: "Text, Pruitt to Marsh, December 2", lines: [
+        "<em>Pruitt:</em> &ldquo;Moving us to Signal. Disappearing msgs on. Cleaner.&rdquo;",
+        "<em>Marsh:</em> &ldquo;Fine.&rdquo;" ] }
+    ],
+    discuss: "These are two different events, and the 30-day setting is a third problem running underneath them. Which of them is a failure of reasonable steps? Which, if any, suggests intent to deprive? Why did the auto-delete destroy messages from before the duty attached?",
+    questions: [
+      { label: "Which event, if any, supports a finding of intent to deprive?",
+        options: [ {id:"nov", t:"Nov 20 trade-in"}, {id:"dec", t:"Dec 2 move to Signal"}, {id:"both", t:"Both"}, {id:"none", t:"Neither"} ],
+        court: "dec", courtText: "Dec 2 move to Signal only" }
+    ]
+  },
+  {
+    num: "4", date: "February", title: "Discovery exposes the gap",
+    tag: "alert", tagLabel: "Discovery",
+    body: [
+      "Plaintiffs request all communications among the defendants&rsquo; sales leaders about pricing. Tidewater responds that Pruitt&rsquo;s texts &ldquo;no longer exist.&rdquo;",
+      "Gulf Coast&rsquo;s production, however, includes 14 months of Brennan&ndash;Pruitt texts from Brennan&rsquo;s own phone, ending around October 15. At deposition Brennan says the two mostly stopped texting after the trade-press story.",
+      "Nothing exists from either side for the period after the complaint was served. A forensic exam of Pruitt&rsquo;s new phone confirms that disappearing messages have been on since December 2. Marsh&rsquo;s phone holds no Pruitt messages, and the Pruitt&ndash;Marsh thread exists nowhere."
+    ],
+    docs: [
+      { src: "Tidewater&rsquo;s response to plaintiffs&rsquo; request, February (excerpt)", lines: ["&ldquo;Tidewater has conducted a reasonable search and states that no responsive text messages exist for Mr. Pruitt, whose device settings automatically delete messages.&rdquo;"] },
+      { src: "Text messages from Gulf Coast&rsquo;s production, October 3", lines: [
+        "<em>Brennan:</em> &ldquo;Holding at $9.40 through Q4. You?&rdquo;",
+        "<em>Pruitt:</em> &ldquo;Same. Southern Crate too.&rdquo;" ] }
+    ],
+    discuss: "This is the replacement question. The Brennan texts help, but how much? Which time periods do they cover, and which do they not? Who is the only person who could have told the story of the Pruitt&ndash;Marsh thread? What did Tidewater&rsquo;s discovery response get right, and what did it leave out?",
+    questions: [
+      { label: "Has the lost ESI been restored or replaced?",
+        options: [ {id:"full", t:"Fully replaced"}, {id:"part", t:"Partly replaced"}, {id:"none", t:"Not replaced"} ],
+        court: "part", courtText: "Partly replaced" }
+    ]
+  },
+  {
+    num: "5", date: "April", title: "The motion for sanctions",
+    tag: "alert", tagLabel: "Sanctions motion",
+    body: [
+      "Plaintiffs move for sanctions under Rule 37(e)(2), asking for an adverse-inference instruction. Tidewater answers that the auto-delete was routine and predated the case, the trade-in was a mistake, the Brennan texts show what these conversations looked like, and any loss was at most negligent.",
+      "At the hearing the court reads from Pruitt&rsquo;s deposition."
+    ],
+    docs: [
+      { src: "Pruitt deposition (excerpt)", lines: [
+        "<em>Q.</em> &ldquo;You acknowledged the October 20 hold notice?&rdquo;",
+        "<em>A.</em> &ldquo;Yes.&rdquo;",
+        "<em>Q.</em> &ldquo;Did it say anything about your phone?&rdquo;",
+        "<em>A.</em> &ldquo;No. I didn&rsquo;t think it covered my phone.&rdquo;",
+        "<em>Q.</em> &ldquo;Why did you move Ms. Marsh to Signal on December 2?&rdquo;",
+        "<em>A.</em> &ldquo;I don&rsquo;t like a cluttered phone.&rdquo;" ] }
+    ],
+    discuss: "Work the rule in order: should the ESI have been preserved, is it lost, did Tidewater fail to take reasonable steps, and can it be replaced? Then separate the losses. Which support curative measures under (e)(1) only, and which, if any, support (e)(2)? What changes if Marsh, not just Pruitt, approved the move to Signal?",
+    questions: [
+      { label: "Did Tidewater act with intent to deprive plaintiffs of the lost texts?",
+        options: [ {id:"none", t:"No, negligence at most"}, {id:"dec", t:"Dec 2 only"}, {id:"both", t:"Dec 2 and the trade-in"} ],
+        court: "dec", courtText: "Dec 2 only" },
+      { label: "What should the court do?",
+        options: [
+          {id:"nothing", t:"No sanctions"},
+          {id:"cure", t:"Curative measures only (e)(1)"},
+          {id:"perm", t:"Curative measures plus permissive adverse inference"},
+          {id:"mand", t:"Mandatory adverse inference"},
+          {id:"default", t:"Default judgment"} ],
+        court: "perm", courtText: "Curative measures plus permissive adverse inference" }
+    ]
+  }
+];
+
+const verdicts = stages.map(s => new Array(s.questions.length).fill(null));
+let current = 0;
+let showOutcome = false;
+
+function optText(si, qi, id) {
+  const o = stages[si].questions[qi].options.find(o => o.id === id);
+  return o ? o.t : null;
+}
+
+function renderPips() {
+  const wrap = document.getElementById('pips');
+  wrap.innerHTML = '';
+  for (let i = 0; i < stages.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < current || showOutcome ? ' done' : i === current ? ' active' : '');
+    wrap.appendChild(d);
+  }
+}
+
+function renderStages(scroll = true) {
+  const container = document.getElementById('stages');
+  container.innerHTML = '';
+
+  for (let i = 0; i <= current; i++) {
+    const s = stages[i];
+    const isDone = i < current || showOutcome;
+    const isActive = i === current && !showOutcome;
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+
+    const numIcon = isDone ? '&#10003;' : s.num;
+    const numClass = isDone ? 'done' : 'active';
+    const tagClass = s.tag === 'alert' ? 'tag-alert' : s.tag === 'warn' ? 'tag-warn' : 'tag-neutral';
+
+    let html = `
+      <div class="stage-header">
+        <div class="stage-num ${numClass}">${numIcon}</div>
+        <div class="stage-title-wrap">
+          <div class="stage-title">${s.title}</div>
+          <div class="stage-meta">${s.date}</div>
+        </div>
+      </div>
+      <span class="tag ${tagClass}">${s.tagLabel}</span>
+      <div class="stage-body">${s.body.map(p => `<p>${p}</p>`).join('')}</div>
+    `;
+
+    (s.docs || []).forEach(d => {
+      html += `<div class="doc-block"><span class="src">${d.src}</span>${d.lines.map(l => `<span class="ln">${l}</span>`).join('')}</div>`;
+    });
+
+    html += `
+      <div class="discuss-box">
+        <div class="dlabel">&#x1F4AC; Group discussion</div>
+        <div class="dtext">${s.discuss}</div>
+      </div>
+    `;
+
+    if (isActive) {
+      s.questions.forEach((q, qi) => {
+        const v = verdicts[i][qi];
+        html += `
+          <div class="verdict-section">
+            <div class="verdict-label">${q.label}</div>
+            <div class="verdict-btns">
+              ${q.options.map((o, oi) => `<button class="vbtn ${v === o.id ? 'sel-' + oi : ''}" aria-pressed="${v === o.id}" onclick="setVerdict(${i},${qi},'${o.id}')">${o.t}</button>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      const isLast = i === stages.length - 1;
+      const btnLabel = isLast ? '&#x1F441; Reveal the ruling' : 'Next stage &rarr;';
+      const btnClass = isLast ? 'advance-btn reveal' : 'advance-btn';
+      html += `<button class="${btnClass}" onclick="advance()">${btnLabel}</button>`;
+    }
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  if (showOutcome) {
+    const ocard = document.createElement('div');
+    ocard.className = 'stage-card';
+
+    let rows = `<div class="compare-row head"><div>Question</div><div>Your group</div><div>The court</div></div>`;
+    stages.forEach((s, si) => {
+      s.questions.forEach((q, qi) => {
+        const mine = verdicts[si][qi];
+        const mineText = mine ? optText(si, qi, mine) : 'No answer recorded';
+        const cls = !mine ? 'none' : (mine === q.court ? 'match' : 'miss');
+        rows += `<div class="compare-row"><div>${q.label}</div><div class="you ${cls}">${mineText}</div><div class="court">${q.courtText}</div></div>`;
+      });
+    });
+
+    ocard.innerHTML = `
+      <div class="outcome-card">
+        <div class="otitle">&#x2696;&#xFE0F; What the court did</div>
+        <div class="onote">This ruling is fictional and was written for this exercise.</div>
+        <p><strong>Trigger and reasonable steps.</strong> The court held that the duty to preserve attached no later than October 20, when the complaint was served. It did not decide whether the September 8 trade-press story and Voss&rsquo;s email were enough, because no text lost before October 20 was at issue. But it found that Tidewater failed to take reasonable steps from October 20 forward. The hold notice never mentioned text messages or phones, IT was never involved, and no one told Pruitt to change his auto-delete setting. That Pruitt&rsquo;s iPhone was personal did not help Tidewater: he was its VP of Sales, he used the phone for business, and Tidewater could direct him to preserve business messages. The rolling 30-day setting meant that, after October 20, the phone kept destroying messages created before the duty attached.</p>
+        <p><strong>Replacement and prejudice.</strong> Gulf Coast&rsquo;s production partly replaced the lost Brennan&ndash;Pruitt texts, but only through mid-October. Nothing replaced Pruitt&rsquo;s messages from October 21 onward, and nothing replaced the Pruitt&ndash;Marsh thread, the only record of what the CEO knew about pricing contacts. The court found prejudice and ordered curative measures under (e)(1): plaintiffs may tell the jury about the loss, may re-depose Pruitt and Marsh at Tidewater&rsquo;s expense, and may recover their fees for the motion.</p>
+        <p><strong>Intent.</strong> The court found the November 20 trade-in careless but not intentional. Pruitt&rsquo;s explanation was believable, and nothing tied the timing to the case. The December 2 move to Signal was different. It came six weeks after both men acknowledged the hold. The message itself said &ldquo;Cleaner,&rdquo; Marsh answered &ldquo;Fine,&rdquo; and Pruitt&rsquo;s deposition answer about a &ldquo;cluttered phone&rdquo; did not persuade the court. The court found intent to deprive under (e)(2).</p>
+        <p><strong>Remedy.</strong> The court gave a permissive adverse-inference instruction: the jury may, but need not, presume that the lost Pruitt&ndash;Marsh messages were unfavorable to Tidewater. It declined to make the instruction mandatory or to enter default, noting that the Brennan texts and pricing data let plaintiffs make their case without such a harsh remedy.</p>
+      </div>
+      <div class="compare-card">
+        <div class="dlabel">Your group and the court</div>
+        ${rows}
+      </div>
+      <div class="debrief-card">
+        <div class="dlabel">Debrief questions</div>
+        <ol>
+          <li>At which stage did your group first say the duty had attached? How does that compare with the court&rsquo;s finding, and why was the September 8 article not enough to settle it?</li>
+          <li>The court treated the trade-in and the move to Signal differently. What facts separated negligence from intent?</li>
+          <li>The auto-delete setting was routine and predated the case, yet it destroyed pre-trigger messages after the trigger. How can that be, and who should have stopped it?</li>
+          <li>What should Voss have put in the October 20 hold notice, and who else belonged on the list?</li>
+          <li>Gulf Coast&rsquo;s production partly cured the loss. How did that change the analysis, and why did it not eliminate sanctions?</li>
+          <li>Is this Pruitt&rsquo;s problem, the company&rsquo;s problem, or counsel&rsquo;s? And in a conspiracy case, why do lost texts between competitors&rsquo; sales leaders carry so much weight? Consider, too, what a parallel DOJ investigation would mean for Pruitt and Marsh personally.</li>
+        </ol>
+      </div>
+      <button class="restart-btn" onclick="restart()">&#x21BA; Restart from Stage 1</button>
+    `;
+    container.appendChild(ocard);
+  }
+
+  renderPips();
+
+  if (scroll && (current > 0 || showOutcome)) {
+    const cards = container.querySelectorAll('.stage-card');
+    const last = cards[cards.length - 1];
+    setTimeout(() => last.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+}
+
+function setVerdict(si, qi, id) {
+  verdicts[si][qi] = id;
+  renderStages(false);
+}
+
+function advance() {
+  if (current < stages.length - 1) {
+    current++;
+  } else {
+    showOutcome = true;
+  }
+  renderStages();
+}
+
+function restart() {
+  current = 0;
+  showOutcome = false;
+  verdicts.forEach(v => v.fill(null));
+  renderStages();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderStages();
+</script>
+</body>
+</html>
