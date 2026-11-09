@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="William F. Hamilton">
+<title>Seven Factors, One Ruling — Comity Analysis After Aérospatiale</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f5f4f0;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  .top-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #888; margin-bottom: 6px;
+  }
+  .main-title { font-size: 32px; font-weight: 700; color: #111; line-height: 1.2; margin-bottom: 6px; }
+  .sub-title { font-size: 16px; color: #666; margin-bottom: 2rem; }
+
+  .standard-box {
+    background: #fff;
+    border: 1px solid #dde8f5;
+    border-left: 4px solid #2E75B6;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .standard-box .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #2E75B6; margin-bottom: 6px;
+  }
+  .standard-box p { font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box p + p { margin-top: 8px; }
+  .standard-box ol { padding-left: 1.3rem; margin-top: 8px; font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box ol li { margin-bottom: 3px; }
+
+  .progress-wrap { display: flex; gap: 6px; margin-bottom: 0.9rem; align-items: center; }
+  .pip { height: 5px; flex: 1; border-radius: 3px; background: #ddd; transition: background 0.35s; }
+  .pip.done { background: #639922; }
+  .pip.active { background: #2E75B6; }
+
+  .bench {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    margin-bottom: 1.5rem; font-size: 12px; color: #777;
+  }
+  .bench .blabel { font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 4px; }
+  .chip {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    border: 1.5px solid #ccc; background: #fff; color: #999;
+  }
+  .chip.p { background: #dbeafe; border-color: #2E75B6; color: #1e3a8a; }
+  .chip.d { background: #ede9fe; border-color: #7c3aed; color: #4c1d95; }
+  .chip.m { background: #fff3cd; border-color: #c8900a; color: #6b4400; }
+
+  .stage-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-card { animation: none; }
+    .pip { transition: none; }
+  }
+
+  .stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .stage-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; flex-shrink: 0;
+  }
+  .stage-num.active { background: #dbeafe; color: #1d4ed8; }
+  .stage-num.done   { background: #dcfce7; color: #166534; font-size: 18px; }
+  .stage-title-wrap { flex: 1; }
+  .stage-title { font-size: 17px; font-weight: 600; color: #111; }
+  .stage-meta  { font-size: 12px; color: #999; margin-top: 1px; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+    background: #f0f0f0; color: #555;
+  }
+  .tag.evidence { background: #dbeafe; color: #1e3a8a; }
+  .tag.sovereign { background: #ede9fe; color: #4c1d95; }
+  .tag.conduct { background: #fff3cd; color: #7c5a00; }
+  .tag.ruling { background: #fde8e8; color: #8b1a1a; }
+
+  .stage-body { font-size: 15px; color: #333; line-height: 1.7; margin-bottom: 1rem; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0.85rem 0; }
+  .compare .col { border-radius: 8px; padding: 0.8rem 1rem; font-size: 13.5px; line-height: 1.6; }
+  .compare .col .chead { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .compare .pl { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .compare .df { background: #f5f3ff; border: 1px solid #ddd6fe; color: #3b1d7a; }
+  .compare ul { padding-left: 1.1rem; }
+  .compare li { margin-bottom: 4px; }
+
+  .doc-block {
+    background: #f8f9fa;
+    border-left: 4px solid #aac4de;
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.85rem 0;
+    font-size: 13.5px;
+    font-style: italic;
+    color: #444;
+    line-height: 1.65;
+  }
+
+  .discuss-box {
+    background: #fffbf0;
+    border: 1px solid #f0d080;
+    border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-top: 0.85rem;
+  }
+  .discuss-box .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #a07000; margin-bottom: 5px;
+  }
+  .discuss-box .dtext { font-size: 14px; color: #4a3200; line-height: 1.6; }
+
+  .verdict-section { margin-top: 1.1rem; }
+  .verdict-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #888; margin-bottom: 8px;
+  }
+  .verdict-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .vbtn {
+    flex: 1; min-width: 140px; padding: 9px 12px; font-size: 14px; font-weight: 500;
+    border: 1.5px solid #ccc; border-radius: 8px; background: #fff; color: #555;
+    cursor: pointer; transition: all 0.15s; font-family: inherit; line-height: 1.35;
+  }
+  .vbtn:hover { background: #f5f5f5; }
+  .vbtn:focus-visible, .advance-btn:focus-visible, .restart-btn:focus-visible,
+  textarea:focus-visible, .check input:focus-visible {
+    outline: 3px solid #2E75B6; outline-offset: 2px;
+  }
+  .vbtn.sel-p { background: #eff6ff; border-color: #2E75B6; color: #1e3a8a; font-weight: 600; }
+  .vbtn.sel-d { background: #f5f3ff; border-color: #7c3aed; color: #3b1d7a; font-weight: 600; }
+  .vbtn.sel-m { background: #fff8ec; border-color: #c8900a; color: #6b4400; font-weight: 600; }
+
+  .teach-note {
+    background: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #2E75B6;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1rem;
+    font-size: 14px;
+    color: #1a3a5c;
+    line-height: 1.65;
+  }
+  .teach-note .tlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #2E75B6; margin-bottom: 4px;
+  }
+
+  .advance-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; font-size: 14px; font-weight: 600;
+    background: #2E75B6; color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit;
+  }
+  .advance-btn:hover  { background: #1a5a9a; }
+  .advance-btn:active { transform: scale(0.97); }
+  .advance-btn.reveal { background: #7c3aed; }
+  .advance-btn.reveal:hover { background: #6025cc; }
+  .advance-btn:disabled { background: #b8c4d0; cursor: not-allowed; transform: none; }
+
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; margin: 0.5rem 0 1rem; }
+  .check { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: #333; line-height: 1.4; }
+  .check input { margin-top: 3px; }
+  textarea {
+    width: 100%; min-height: 90px; padding: 10px 12px; font-family: inherit; font-size: 14px;
+    border: 1.5px solid #ccc; border-radius: 8px; resize: vertical; color: #222; margin-bottom: 1rem;
+  }
+
+  .outcome-card {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-left: 4px solid #dc2626;
+    border-radius: 0 10px 10px 0;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .outcome-card .otitle { font-size: 16px; font-weight: 700; color: #7f1d1d; margin-bottom: 10px; }
+  .outcome-card p { font-size: 14.5px; color: #450a0a; line-height: 1.7; margin-bottom: 10px; }
+  .outcome-card p:last-child { margin-bottom: 0; }
+
+  .summary-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+  }
+  .summary-card .slabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #888; margin-bottom: 8px;
+  }
+  table.sum { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.sum th { text-align: left; font-size: 12px; color: #888; font-weight: 600; padding: 6px 8px; border-bottom: 1px solid #ddd; }
+  table.sum td { padding: 7px 8px; border-bottom: 1px solid #eee; vertical-align: top; color: #333; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .pill.p { background: #dbeafe; color: #1e3a8a; }
+  .pill.d { background: #ede9fe; color: #4c1d95; }
+  .pill.m { background: #fff3cd; color: #6b4400; }
+  .pill.n { background: #eee; color: #777; }
+  .your-ruling { font-size: 14px; color: #333; margin-top: 10px; line-height: 1.6; }
+
+  .verify-card {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    font-size: 13.5px;
+    color: #5b4200;
+    line-height: 1.65;
+  }
+  .verify-card strong { color: #4a3400; }
+
+  .debrief-card {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+  }
+  .debrief-card .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #888; margin-bottom: 10px;
+  }
+  .debrief-card ol { padding-left: 1.4rem; }
+  .debrief-card li { font-size: 14px; color: #333; line-height: 1.65; margin-bottom: 10px; }
+  .debrief-card li:last-child { margin-bottom: 0; }
+
+  .restart-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 1.5rem; padding: 9px 18px; font-size: 13px; font-weight: 600;
+    background: #fff; color: #555; border: 1.5px solid #ccc; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .restart-btn:hover { background: #f0f0f0; }
+
+  @media (max-width: 600px) {
+    .main-title { font-size: 24px; }
+    .vbtn { min-width: 100px; font-size: 13px; }
+    .compare { grid-template-columns: 1fr; }
+    .checks { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-label">Electronic Discovery &mdash; International Cross-Border Discovery</div>
+  <div class="main-title">Seven factors, one ruling</div>
+  <div class="sub-title">Palmetto Ridge Europe SAS &mdash; Plaintiff&rsquo;s Motion to Compel the Lyon Materials</div>
+
+  <div class="standard-box">
+    <div class="label">The legal standard</div>
+    <p>When a foreign law stands in the way of US discovery, the Hague Evidence Convention is not the exclusive route. In <em>Soci&eacute;t&eacute; Nationale Industrielle A&eacute;rospatiale</em>, 482 U.S. 522 (1987), the Supreme Court sent courts to a comity analysis and pointed to the Restatement factors. Lower courts commonly add two more. This exercise uses seven:</p>
+    <ol>
+      <li>The importance to the litigation of the documents requested</li>
+      <li>The degree of specificity of the request</li>
+      <li>Whether the information originated in the United States</li>
+      <li>The availability of alternative means of securing the information</li>
+      <li>The balance of national interests: the interests of the United States against the interests of the state where the information sits</li>
+      <li>The hardship of compliance on the party resisting discovery</li>
+      <li>The good faith of the party resisting discovery</li>
+    </ol>
+    <p style="margin-top: 10px;">The factors do not come with weights or a formula. Counting them is not the same as weighing them. That is the judgment you are here to practice.</p>
+  </div>
+
+  <div class="standard-box" style="border-left-color: #888; border-color: #e8e8e8;">
+    <div class="label" style="color: #666;">Your role and the record</div>
+    <p><strong>You are the magistrate judge.</strong> Darnell Washington&rsquo;s race discrimination case is pending in the Middle District of Florida. Plaintiff served Request No. 4 on January 12 seeking all communications about promotion decisions company-wide, including the Lyon subsidiary, Palmetto Ridge Europe SAS. Palmetto Ridge produced its Tampa documents and objected to the Lyon materials on French-law grounds, but first raised that objection in its opposition to the motion to compel, seven months after the request. The discovery cutoff is four months away.</p>
+    <p><strong>The material at stake:</strong> the mailbox of Camille Laurent, a Lyon operations supervisor, which holds her replies to Operations Manager Kyle Reeves about how the &ldquo;culture fit&rdquo; standard was applied to lead roles. Reeves&rsquo;s own messages in the thread have been produced from Tampa. Camille&rsquo;s replies exist only in Lyon.</p>
+    <p><strong>Your task:</strong> for each factor, decide which way it points: toward compelling production, toward protecting the data, or neutral. Then rule on the motion.</p>
+  </div>
+
+  <div class="progress-wrap" id="pips"></div>
+  <div class="bench" id="bench"></div>
+  <div id="stages"></div>
+
+</div>
+
+<script>
+const factors = [
+  {
+    num: "1", title: "Importance to the litigation", group: "evidence", groupLabel: "Factor 1 of 7 \u00b7 The evidence",
+    body: "Courts ask whether the material is merely relevant or goes to the heart of the case. The more central it is, the more a court is willing to press on a foreign-law objection.",
+    pl: [
+      "Plaintiff&rsquo;s theory is pretext: that &ldquo;culture fit&rdquo; was a cover for race. Camille&rsquo;s replies describe how the standard was actually applied.",
+      "Reeves&rsquo;s side of the thread is already produced. Only Camille&rsquo;s candid replies are missing, and they exist nowhere else."
+    ],
+    df: [
+      "Camille was a recipient, not a decision-maker. She did not choose the lead dispatcher.",
+      "Plaintiff has Reeves&rsquo;s testimony and the promotion records. The Lyon replies are at most corroboration."
+    ],
+    doc: "Camille Laurent, reply to Reeves (as described in privilege log, produced portion redacted): &ldquo;[Redacted] &hellip; we use the same &lsquo;fit&rsquo; test in Lyon. Nobody writes down what it means.&rdquo;",
+    discuss: "Is this evidence central, or cumulative of what plaintiff already has? What if Camille&rsquo;s replies are the only contemporaneous account of how the standard was applied?",
+    ref: "p",
+    refLabel: "Favors compelling",
+    teach: "One defensible reading: this points toward compelling. The material goes to the heart of the pretext theory and cannot be obtained from another source. Students who call it neutral are usually leaning on the fact that Camille was not the decision-maker, which is a fair point about weight but does not change that the replies are unique."
+  },
+  {
+    num: "2", title: "Specificity of the request", group: "evidence", groupLabel: "Factor 2 of 7 \u00b7 The evidence",
+    body: "Broad, fishing-style requests fare poorly when foreign law is in play. Narrow, targeted ones fare better. Courts look at the request as it stands, and increasingly at what the requesting party is willing to narrow it to.",
+    pl: [
+      "Plaintiff has narrowed the request: three Lyon custodians, six agreed search terms, January 1 to March 31.",
+      "The narrowed request targets a defined period and defined subject: the lead-role selections at issue."
+    ],
+    df: [
+      "Request No. 4 as served was company-wide and covered three years. The narrowing came only after the motion was filed.",
+      "&ldquo;Culture fit&rdquo; appears in many unrelated communications, and the search would sweep in personal data of non-party employees."
+    ],
+    doc: "Plaintiff&rsquo;s narrowing letter: &ldquo;Plaintiff will accept production of responsive messages from three named Lyon custodians, using the six search terms attached, for January 1 through March 31 of this year.&rdquo;",
+    discuss: "Does a narrowed offer cure an overbroad original request? Should the court judge the request as served or as now proposed? What would make this specific enough?",
+    ref: "p",
+    refLabel: "Favors compelling (as narrowed)",
+    teach: "One defensible reading: as narrowed, this favors compelling. A court can hold the original request to be overbroad and still credit the narrowed version. Students who rate it neutral because of the late narrowing are making a good-faith point that belongs under Factor 7. Watch for students double-counting the same fact."
+  },
+  {
+    num: "3", title: "Where the information originated", group: "evidence", groupLabel: "Factor 3 of 7 \u00b7 The evidence",
+    body: "Information that originated in the United States is easier to demand than information created and held abroad. The question is where the information came from, not just where it sits now.",
+    pl: [
+      "The thread is about a promotion decision made in Tampa, by a Tampa manager, affecting a Florida employee, under a US corporation&rsquo;s policy.",
+      "The company is a US corporation that chose to run Lyon as its wholly owned subsidiary."
+    ],
+    df: [
+      "Camille wrote her replies in Lyon, on a French server, as a French employee, about practices in the French office.",
+      "The data has never left France. Her rights in her own mailbox arise under French and EU law."
+    ],
+    doc: null,
+    discuss: "The subject matter is American, but the authorship and storage are French. Which matters more? Does it change if Camille was describing Tampa&rsquo;s practice, or Lyon&rsquo;s?",
+    ref: "m",
+    refLabel: "Neutral / mixed",
+    teach: "One defensible reading: genuinely mixed. The subject is American; the author and the storage are French. Reasonable judges split here, which is the point. Ask students which of the two facts they gave more weight to, and why."
+  },
+  {
+    num: "4", title: "Alternative means of getting the information", group: "evidence", groupLabel: "Factor 4 of 7 \u00b7 The evidence",
+    body: "If the information can reasonably be had another way, the case for overriding foreign law weakens. If the alternatives are slow, partial, or second-hand, it strengthens.",
+    pl: [
+      "A Hague letter of request would take an estimated six to twelve months, and the discovery cutoff is four months away.",
+      "French counsel acknowledges that France&rsquo;s reservation to the Convention limits requests for pretrial document discovery, so a letter of request may not reach these documents at all."
+    ],
+    df: [
+      "Reeves, in Tampa, can be deposed about the thread, and his messages are already produced.",
+      "Camille can be deposed by remote video if she is willing, and she may agree to testify and to produce what she chooses."
+    ],
+    doc: null,
+    discuss: "Are the alternatives adequate substitutes, or only partial ones? Is Reeves&rsquo;s memory of someone else&rsquo;s replies a substitute for the replies themselves? How should the discovery cutoff factor in?",
+    ref: "p",
+    refLabel: "Leans toward compelling",
+    teach: "One defensible reading: leans toward compelling, because the Hague route is slow and probably limited, and the substitutes are second-hand. Students who find the alternatives adequate have a real argument, particularly about Camille&rsquo;s voluntary testimony. The key analytic move is asking whether the alternative gives you the same evidence or only information about the evidence."
+  },
+  {
+    num: "5", title: "Balance of national interests", group: "sovereign", groupLabel: "Factor 5 of 7 \u00b7 The sovereigns",
+    body: "This is the factor that most directly asks what is at stake for each state. It asks whether not compelling would undermine important US interests, and whether compelling would undermine important French interests.",
+    pl: [
+      "The United States has a strong interest in enforcing Title VII and in ensuring that a US employer cannot avoid discovery by holding evidence in a subsidiary.",
+      "The French government has not appeared, filed a statement, or objected to production in this case."
+    ],
+    df: [
+      "France has a strong interest in protecting employees&rsquo; privacy and data, and in controlling evidence-gathering on its own territory.",
+      "The blocking statute reflects a deliberate sovereign choice. Camille&rsquo;s rights are personal and cannot be waived by her employer."
+    ],
+    doc: "Affidavit of French counsel: &ldquo;Enforcement of the blocking statute is rare, but it is not unknown. I cannot tell you that no prosecutor would act.&rdquo;",
+    discuss: "How much weight should a court give to a foreign state&rsquo;s interest when that state has said nothing in this case? Are the interests being weighed even comparable? Whose interest is being invoked, the state&rsquo;s or the employee&rsquo;s?",
+    ref: "m",
+    refLabel: "Neutral / mixed",
+    teach: "One defensible reading: mixed, with a modest lean toward compelling. Both interests are real. Courts often treat the absence of an objection from the foreign government as meaningful, and they treat the US interest in enforcing anti-discrimination statutes as strong. But the employee-privacy interest is not trivial. Students who rate it protective should be able to say why the absence of a government objection does not move them."
+  },
+  {
+    num: "6", title: "Hardship of compliance", group: "conduct", groupLabel: "Factor 6 of 7 \u00b7 The parties",
+    body: "This factor looks at the real burden on the party being ordered to produce, including the realistic risk of penalty, and whether the party has done anything to reduce it.",
+    pl: [
+      "French counsel concedes enforcement is rare, and no authority has opened an investigation.",
+      "The hardship can be reduced: ask Camille for written consent, review in France, redact irrelevant personal data, and obtain a protective order. The company has done none of these."
+    ],
+    df: [
+      "The managing director of Palmetto Ridge Europe SAS faces personal criminal exposure. Data protection fines could reach a percentage of revenue.",
+      "The company would be ordered to act against an employee&rsquo;s protected rights, with labor-law consequences if it presses her."
+    ],
+    doc: null,
+    discuss: "How should a court weigh a real but unlikely penalty? Does hardship count for less when the party has not tried to reduce it? Whose hardship counts, the company&rsquo;s or the managing director&rsquo;s?",
+    ref: "m",
+    refLabel: "Neutral / mixed",
+    teach: "One defensible reading: mixed. The hardship is real but reducible, and the company has not tried to reduce it. Courts tend to discount hardship that a party could have lessened and did not. This is the factor most likely to bleed into Factor 7. Press students to say what each factor is actually measuring."
+  },
+  {
+    num: "7", title: "Good faith of the resisting party", group: "conduct", groupLabel: "Factor 7 of 7 \u00b7 The parties",
+    body: "Courts look at whether the party invoking foreign law has genuinely tried to comply and to reconcile the conflict, or is using the foreign statute as a litigation position.",
+    pl: [
+      "French law was first raised in the opposition to the motion to compel, seven months after the request.",
+      "The Lyon hold issued ten weeks after the request. The company did not ask Camille for consent, did not contact French authorities, and did not retain French counsel until the motion was pending."
+    ],
+    df: [
+      "The company produced all Tampa material promptly and in full.",
+      "In its opposition it offered an in-country review protocol, retained French counsel, and submitted an affidavit. It is acting on local legal advice."
+    ],
+    doc: null,
+    discuss: "Does a late but real protocol offer cure the delay? Is the delay evidence of bad faith or of ordinary lawyer error? What would a good-faith company have done in January?",
+    ref: "p",
+    refLabel: "Favors compelling",
+    teach: "One defensible reading: favors compelling, because the timing suggests a litigation position rather than a genuine, early attempt to reconcile. The protocol offer helps the company but does not erase seven months of silence. This is the factor over which the company had the most control, which makes it the most instructive for future practice."
+  }
+];
+
+const rulings = [
+  { k: "p", t: "Compel in full", d: "Order production of the narrowed request as plaintiff proposes." },
+  { k: "m", t: "Compel in part, with conditions", d: "Order production of a defined set, with protective steps for the French data." },
+  { k: "d", t: "Deny without prejudice", d: "Require plaintiff to pursue the Hague route or Camille&rsquo;s consent first." }
+];
+
+const verdicts = new Array(factors.length).fill(null);
+let current = 0;
+let showOutcome = false;
+let ruling = null;
+let decisive = new Array(factors.length).fill(false);
+let reasoning = "";
+
+const RULING_STAGE = factors.length;
+
+function ratingLabel(k) {
+  if (k === "p") return "Favors compelling";
+  if (k === "d") return "Favors protecting";
+  if (k === "m") return "Neutral / mixed";
+  return "Not rated";
+}
+
+function renderPips() {
+  const wrap = document.getElementById("pips");
+  wrap.innerHTML = "";
+  const total = factors.length + 1;
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement("div");
+    const done = i < current || (showOutcome && i === current);
+    d.className = "pip" + (done ? " done" : i === current ? " active" : "");
+    wrap.appendChild(d);
+  }
+}
+
+function renderBench() {
+  const bench = document.getElementById("bench");
+  let html = '<span class="blabel">Bench notes</span>';
+  for (let i = 0; i < factors.length; i++) {
+    const v = verdicts[i];
+    html += '<span class="chip ' + (v || "") + '" title="' + ratingLabel(v) + '">' + (i + 1) + '</span>';
+  }
+  html += '<span style="margin-left:8px;">Blue: compel &middot; Purple: protect &middot; Amber: neutral</span>';
+  bench.innerHTML = html;
+}
+
+function listHtml(arr) {
+  return "<ul>" + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>";
+}
+
+function factorCard(i, isActive, isDone) {
+  const s = factors[i];
+  const v = verdicts[i];
+  const numIcon = isDone ? "&#10003;" : s.num;
+  const numClass = isDone ? "done" : "active";
+
+  let html = '<div class="stage-header">' +
+    '<div class="stage-num ' + numClass + '">' + numIcon + '</div>' +
+    '<div class="stage-title-wrap">' +
+    '<div class="stage-title">' + s.title + '</div>' +
+    '<div class="stage-meta">' + s.groupLabel + '</div>' +
+    '</div></div>' +
+    '<span class="tag ' + s.group + '">' + (s.group === "evidence" ? "About the evidence" : s.group === "sovereign" ? "About the sovereigns" : "About the parties&rsquo; conduct") + '</span>' +
+    '<div class="stage-body">' + s.body + '</div>' +
+    '<div class="compare">' +
+    '<div class="col pl"><div class="chead">Plaintiff points to</div>' + listHtml(s.pl) + '</div>' +
+    '<div class="col df"><div class="chead">Palmetto Ridge points to</div>' + listHtml(s.df) + '</div>' +
+    '</div>';
+
+  if (s.doc) {
+    html += '<div class="doc-block">' + s.doc + '</div>';
+  }
+
+  html += '<div class="discuss-box"><div class="dlabel">&#x1F4AC; Group discussion</div>' +
+    '<div class="dtext">' + s.discuss + '</div></div>';
+
+  if (isActive) {
+    html += '<div class="verdict-section"><div class="verdict-label">Which way does this factor point?</div>' +
+      '<div class="verdict-btns">' +
+      '<button class="vbtn ' + (v === "p" ? "sel-p" : "") + '" aria-pressed="' + (v === "p") + '" onclick="setVerdict(' + i + ',\'p\')">Favors compelling production</button>' +
+      '<button class="vbtn ' + (v === "d" ? "sel-d" : "") + '" aria-pressed="' + (v === "d") + '" onclick="setVerdict(' + i + ',\'d\')">Favors protecting the data</button>' +
+      '<button class="vbtn ' + (v === "m" ? "sel-m" : "") + '" aria-pressed="' + (v === "m") + '" onclick="setVerdict(' + i + ',\'m\')">Neutral / mixed</button>' +
+      '</div></div>';
+    if (v !== null) {
+      html += '<div class="teach-note"><div class="tlabel">Instructor note &middot; one defensible reading: ' + s.refLabel + '</div>' + s.teach + '</div>';
+    }
+    html += '<button class="advance-btn" onclick="advance()">' + (i === factors.length - 1 ? "On to your ruling &rarr;" : "Next factor &rarr;") + '</button>';
+  } else if (isDone && v !== null) {
+    html += '<div class="verdict-label" style="margin-top:1rem;">Your group&rsquo;s call: ' + ratingLabel(v) + '</div>';
+  }
+  return html;
+}
+
+function rulingCard() {
+  let html = '<div class="stage-header">' +
+    '<div class="stage-num ' + (showOutcome ? "done" : "active") + '">' + (showOutcome ? "&#10003;" : "8") + '</div>' +
+    '<div class="stage-title-wrap"><div class="stage-title">Your ruling</div>' +
+    '<div class="stage-meta">Weigh, don&rsquo;t count</div></div></div>' +
+    '<span class="tag ruling">The decision</span>' +
+    '<div class="stage-body">You have rated all seven factors. Now decide the motion. Remember that the factors are not equal and no formula tells you how to combine them. Pick the ruling you would sign, name the factors that drove it, and say why in a sentence or two.</div>';
+
+  if (!showOutcome) {
+    html += '<div class="verdict-label">Rule on the motion</div><div class="verdict-btns">' +
+      rulings.map(function (r) {
+        return '<button class="vbtn ' + (ruling === r.k ? "sel-" + r.k : "") + '" aria-pressed="' + (ruling === r.k) + '" onclick="setRuling(\'' + r.k + '\')"><strong>' + r.t + '</strong><br><span style="font-weight:400;font-size:12.5px;">' + r.d + '</span></button>';
+      }).join("") + '</div>';
+
+    html += '<div class="verdict-label">Which factors drove your ruling? (choose any)</div><div class="checks">' +
+      factors.map(function (f, i) {
+        return '<label class="check"><input type="checkbox" ' + (decisive[i] ? "checked" : "") + ' onchange="setDecisive(' + i + ',this.checked)"> <span>' + (i + 1) + '. ' + f.title + '</span></label>';
+      }).join("") + '</div>';
+
+    html += '<div class="verdict-label">Your reasoning</div>' +
+      '<textarea id="reason" placeholder="In a sentence or two: why does this ruling follow from the factors you chose?" oninput="reasoning=this.value">' + reasoning.replace(/&/g, "&amp;").replace(/</g, "&lt;") + '</textarea>';
+
+    html += '<button class="advance-btn reveal" ' + (ruling === null ? "disabled" : "") + ' onclick="advance()">&#x1F441; Reveal how courts approach this</button>';
+  } else {
+    const chosen = rulings.filter(function (r) { return r.k === ruling; })[0];
+    html += '<div class="verdict-label">Your ruling: ' + chosen.t + '</div>';
+  }
+  return html;
+}
+
+function summaryHtml() {
+  const chosen = rulings.filter(function (r) { return r.k === ruling; })[0];
+  let rows = factors.map(function (f, i) {
+    const v = verdicts[i];
+    return '<tr><td>' + (i + 1) + '. ' + f.title + (decisive[i] ? ' <strong>(drove your ruling)</strong>' : '') + '</td>' +
+      '<td><span class="pill ' + (v || "n") + '">' + ratingLabel(v) + '</span></td>' +
+      '<td><span class="pill ' + f.ref + '">' + f.refLabel + '</span></td></tr>';
+  }).join("");
+
+  const counts = { p: 0, d: 0, m: 0 };
+  verdicts.forEach(function (v) { if (v) counts[v]++; });
+
+  let html = '<div class="summary-card"><div class="slabel">Your factors against one defensible reading</div>' +
+    '<table class="sum"><tr><th>Factor</th><th>Your rating</th><th>One defensible reading</th></tr>' + rows + '</table>' +
+    '<div class="your-ruling"><strong>Your tally:</strong> ' + counts.p + ' toward compelling, ' + counts.d + ' toward protecting, ' + counts.m + ' neutral. ' +
+    '<strong>Your ruling:</strong> ' + chosen.t + '.' +
+    (reasoning.trim() ? '<br><strong>Your reasoning:</strong> ' + reasoning.replace(/&/g, "&amp;").replace(/</g, "&lt;") : '') +
+    '</div></div>';
+  return html;
+}
+
+function renderStages() {
+  const container = document.getElementById("stages");
+  container.innerHTML = "";
+
+  const last = Math.min(current, RULING_STAGE);
+  for (let i = 0; i <= last; i++) {
+    const card = document.createElement("div");
+    card.className = "stage-card";
+    if (i < factors.length) {
+      const isActive = i === current && !showOutcome;
+      const isDone = !isActive;
+      card.innerHTML = factorCard(i, isActive, isDone);
+    } else {
+      card.innerHTML = rulingCard();
+    }
+    container.appendChild(card);
+  }
+
+  if (showOutcome) {
+    const ocard = document.createElement("div");
+    ocard.className = "stage-card";
+    ocard.innerHTML = summaryHtml() +
+      '<div class="outcome-card">' +
+      '<div class="otitle">&#x2696;&#xFE0F; How courts approach this</div>' +
+      '<p>There is no answer key, and that is deliberate. Judges applying these same factors to these same facts can reach different rulings, and both can be defensible. What separates a strong ruling from a weak one is not the result but the reasoning: it identifies which factors carry the most weight on these facts, explains why, and does not hide behind a head count.</p>' +
+      '<p>Look at the structure of the seven. Factors 1 to 4 are about the evidence: how much it matters and whether there is another way to get it. Factor 5 is about the two sovereigns. Factors 6 and 7 are about the parties&rsquo; own conduct, and those are the two the company could most have changed by acting differently in January. A party that issues the hold early, retains local counsel at once, asks the employee for consent, and proposes a protocol before the motion is filed turns Factors 6 and 7 from liabilities into assets.</p>' +
+      '<p>Many courts in this position end up in the middle: compelling a narrowed set of material, with protective steps such as in-country review, notice to the employee, redaction of irrelevant personal data, and a protective order. That outcome gives each sovereign something, which is often the best a federal judge can do when two legal systems give opposite answers about the same email.</p>' +
+      '</div>' +
+      '<div class="verify-card"><strong>Instructor verification note.</strong> The Restatement factors are cited in <em>A&eacute;rospatiale</em>, 482 U.S. 522, 544 n.28 (1987); the sixth and seventh factors are added by lower courts, and the exact formulation varies by circuit, so confirm which version your circuit and district apply. Also confirm the Hague Evidence Convention reservation France has made as to pretrial document discovery, the current text and enforcement practice of the French blocking statute, and current EU data protection requirements. The facts in this scenario are invented for teaching.</div>' +
+      '<div class="debrief-card"><div class="dlabel">Debrief questions</div><ol>' +
+      '<li>Which factor drove your ruling, and why that one over the others?</li>' +
+      '<li>If your ratings split roughly evenly, how did you break the tie? Is that a legal rule or a judgment?</li>' +
+      '<li>Which factors are about the evidence, which about the sovereigns, and which about the parties? Which group did you weigh most heavily?</li>' +
+      '<li>What could the company have done in January to change Factors 6 and 7?</li>' +
+      '<li>How would the analysis change if France had formally objected through its government? If Camille had consented in writing?</li>' +
+      '<li>Why might two judges applying the same seven factors reach opposite rulings, and is that a flaw in the test or a feature of judging?</li>' +
+      '</ol></div>' +
+      '<button class="restart-btn" onclick="restart()">&#x21BA; Restart from Factor 1</button>';
+    container.appendChild(ocard);
+  }
+
+  renderPips();
+  renderBench();
+
+  if (current > 0 || showOutcome) {
+    const cards = container.querySelectorAll(".stage-card");
+    const lastCard = cards[cards.length - 1];
+    setTimeout(function () { lastCard.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50);
+  }
+}
+
+function setVerdict(i, v) {
+  verdicts[i] = v;
+  const y = window.scrollY;
+  renderStagesNoScroll();
+  window.scrollTo(0, y);
+}
+
+function setRuling(k) {
+  ruling = k;
+  const y = window.scrollY;
+  renderStagesNoScroll();
+  window.scrollTo(0, y);
+}
+
+function setDecisive(i, checked) {
+  decisive[i] = checked;
+}
+
+function renderStagesNoScroll() {
+  const container = document.getElementById("stages");
+  container.innerHTML = "";
+  const last = Math.min(current, RULING_STAGE);
+  for (let i = 0; i <= last; i++) {
+    const card = document.createElement("div");
+    card.className = "stage-card";
+    card.style.animation = "none";
+    if (i < factors.length) {
+      const isActive = i === current && !showOutcome;
+      card.innerHTML = factorCard(i, isActive, !isActive);
+    } else {
+      card.innerHTML = rulingCard();
+    }
+    container.appendChild(card);
+  }
+  renderPips();
+  renderBench();
+}
+
+function advance() {
+  if (current < RULING_STAGE) {
+    current++;
+  } else if (ruling !== null) {
+    showOutcome = true;
+  }
+  renderStages();
+}
+
+function restart() {
+  current = 0;
+  showOutcome = false;
+  ruling = null;
+  reasoning = "";
+  verdicts.fill(null);
+  decisive.fill(false);
+  renderStages();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+renderStages();
+</script>
+</body>
+</html>
