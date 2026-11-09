@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="William F. Hamilton">
+<title>Same Email, Two Sovereigns — Palmetto Ridge Europe SAS</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f5f4f0;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  .top-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .sub-title { font-size: 16px; color: #666; margin-bottom: 2rem; }
+
+  .standard-box {
+    background: #fff;
+    border: 1px solid #dde8f5;
+    border-left: 4px solid #2E75B6;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .standard-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #2E75B6;
+    margin-bottom: 6px;
+  }
+  .standard-box p { font-size: 14px; color: #1a3a5c; line-height: 1.65; }
+  .standard-box p + p { margin-top: 8px; }
+
+  .progress-wrap { display: flex; gap: 6px; margin-bottom: 1.5rem; align-items: center; }
+  .pip { height: 5px; flex: 1; border-radius: 3px; background: #ddd; transition: background 0.35s; }
+  .pip.done { background: #639922; }
+  .pip.active { background: #2E75B6; }
+
+  .stage-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage-card { animation: none; }
+    .pip { transition: none; }
+  }
+
+  .stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .stage-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; flex-shrink: 0;
+  }
+  .stage-num.active { background: #dbeafe; color: #1d4ed8; }
+  .stage-num.done   { background: #dcfce7; color: #166534; font-size: 18px; }
+  .stage-title-wrap { flex: 1; }
+  .stage-title { font-size: 17px; font-weight: 600; color: #111; }
+  .stage-meta  { font-size: 12px; color: #999; margin-top: 1px; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .tag-us      { background: #dbeafe; color: #1e3a8a; }
+  .tag-fr      { background: #ede9fe; color: #4c1d95; }
+  .tag-warn    { background: #fff3cd; color: #7c5a00; }
+  .tag-alert   { background: #fde8e8; color: #8b1a1a; }
+  .tag-neutral { background: #f0f0f0; color: #555; }
+
+  .stage-body { font-size: 15px; color: #333; line-height: 1.7; margin-bottom: 1rem; }
+
+  .doc-block {
+    background: #f8f9fa;
+    border-left: 4px solid #aac4de;
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.85rem 0;
+    font-size: 13.5px;
+    font-style: italic;
+    color: #444;
+    line-height: 1.65;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0.85rem 0;
+  }
+  .compare .col {
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .compare .col .chead { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .compare .us { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .compare .fr { background: #f5f3ff; border: 1px solid #ddd6fe; color: #3b1d7a; }
+  .compare ul { padding-left: 1.1rem; }
+  .compare li { margin-bottom: 3px; }
+
+  .discuss-box {
+    background: #fffbf0;
+    border: 1px solid #f0d080;
+    border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-top: 0.85rem;
+  }
+  .discuss-box .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #a07000; margin-bottom: 5px;
+  }
+  .discuss-box .dtext { font-size: 14px; color: #4a3200; line-height: 1.6; }
+
+  .verdict-section { margin-top: 1.1rem; }
+  .verdict-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #888; margin-bottom: 8px;
+  }
+  .verdict-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .vbtn {
+    flex: 1; min-width: 120px; padding: 9px 12px; font-size: 14px; font-weight: 500;
+    border: 1.5px solid #ccc; border-radius: 8px; background: #fff; color: #555;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+  .vbtn:hover { background: #f5f5f5; }
+  .vbtn:focus-visible, .advance-btn:focus-visible, .restart-btn:focus-visible {
+    outline: 3px solid #2E75B6; outline-offset: 2px;
+  }
+  .vbtn.sel-a { background: #f0fbe8; border-color: #5a9216; color: #2a5a00; font-weight: 600; }
+  .vbtn.sel-b { background: #fff8ec; border-color: #c8900a; color: #6b4400; font-weight: 600; }
+  .vbtn.sel-c { background: #f0eeff; border-color: #7060cc; color: #3a2a8a; font-weight: 600; }
+
+  .teach-note {
+    background: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #2E75B6;
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1rem;
+    font-size: 14px;
+    color: #1a3a5c;
+    line-height: 1.65;
+  }
+  .teach-note .tlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #2E75B6; margin-bottom: 4px;
+  }
+
+  .advance-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; font-size: 14px; font-weight: 600;
+    background: #2E75B6; color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit;
+  }
+  .advance-btn:hover  { background: #1a5a9a; }
+  .advance-btn:active { transform: scale(0.97); }
+  .advance-btn.reveal { background: #7c3aed; }
+  .advance-btn.reveal:hover { background: #6025cc; }
+
+  .outcome-card {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-left: 4px solid #dc2626;
+    border-radius: 0 10px 10px 0;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .outcome-card .otitle { font-size: 16px; font-weight: 700; color: #7f1d1d; margin-bottom: 10px; }
+  .outcome-card p { font-size: 14.5px; color: #450a0a; line-height: 1.7; margin-bottom: 10px; }
+  .outcome-card p:last-child { margin-bottom: 0; }
+
+  .verify-card {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    font-size: 13.5px;
+    color: #5b4200;
+    line-height: 1.65;
+  }
+  .verify-card strong { color: #4a3400; }
+
+  .debrief-card {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+  }
+  .debrief-card .dlabel {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #888; margin-bottom: 10px;
+  }
+  .debrief-card ol { padding-left: 1.4rem; }
+  .debrief-card li { font-size: 14px; color: #333; line-height: 1.65; margin-bottom: 10px; }
+  .debrief-card li:last-child { margin-bottom: 0; }
+
+  .restart-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 1.5rem; padding: 9px 18px; font-size: 13px; font-weight: 600;
+    background: #fff; color: #555; border: 1.5px solid #ccc; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .restart-btn:hover { background: #f0f0f0; }
+
+  @media (max-width: 600px) {
+    .main-title { font-size: 24px; }
+    .vbtn { min-width: 90px; font-size: 13px; }
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-label">Electronic Discovery &mdash; International Cross-Border Discovery</div>
+  <div class="main-title">Same email, two sovereigns</div>
+  <div class="sub-title">Palmetto Ridge Logistics, Inc. &amp; Palmetto Ridge Europe SAS &mdash; Cross-Border Scenario</div>
+
+  <div class="standard-box">
+    <div class="label">The idea to carry through this exercise</div>
+    <p>Rights are not a property of the person or of the document. They are created and protected by the sovereign where the person and the data sit &mdash; and that varies from sovereign to sovereign.</p>
+    <p>A United States lawyer is used to a single, fairly uniform body of procedural law. Across a border, the same email can carry a duty to produce in one country and a criminal exposure for producing it in another, at the same moment.</p>
+  </div>
+
+  <div class="standard-box" style="border-left-color: #888; border-color: #e8e8e8;">
+    <div class="label" style="color: #666;">Background</div>
+    <p><strong>The company:</strong> Palmetto Ridge Logistics, Inc., the Tampa freight company from Module 1, has acquired a small French logistics firm, Palmetto Ridge Europe SAS, based in Lyon. Darnell Washington&rsquo;s discrimination suit is pending in the Middle District of Florida. Plaintiff has served a Rule 34 request for all communications about promotion decisions across the company&rsquo;s operations, including Lyon.</p>
+    <p style="margin-top: 8px;"><strong>The custodian:</strong> Camille Laurent, a Lyon-based operations supervisor. In February she was copied on a thread with Operations Manager Kyle Reeves about how the company picks &ldquo;culture fit&rdquo; candidates for lead roles. The thread sits on a mail server in Lyon. She also discussed it with Reeves on a personal messaging app on her own phone.</p>
+  </div>
+
+  <div class="progress-wrap" id="pips"></div>
+  <div id="stages"></div>
+
+</div>
+
+<script>
+const stages = [
+  {
+    num: "1", date: "Stage 1", title: "The request arrives in Tampa",
+    tag: "us", tagLabel: "The United States view",
+    body: "Plaintiff&rsquo;s Rule 34 request reaches Palmetto Ridge&rsquo;s counsel in Tampa. It covers every communication about promotion decisions, company-wide. In-house counsel&rsquo;s first reaction: &ldquo;Lyon is a separate French entity. Let&rsquo;s deal with Tampa first and worry about France later.&rdquo; The parent company owns Palmetto Ridge Europe SAS outright and its IT team administers the Lyon mail server.",
+    doc: "Request No. 4: &ldquo;All documents and communications, wherever located, concerning the selection of any employee for a lead or supervisory position from January 1 of the three preceding years to the present.&rdquo;",
+    discuss: "What does the company owe the court right now? Is the Lyon server within the company&rsquo;s possession, custody, or control? What happens if no hold goes to Lyon because &ldquo;that&rsquo;s a French entity&rdquo;?",
+    vq: "Is the Lyon mailbox within the company&rsquo;s Rule 34 control?",
+    opts: [
+      { k: "a", t: "Yes" },
+      { k: "b", t: "No" },
+      { k: "c", t: "Depends on the test" }
+    ],
+    teach: "Control is where the analysis starts, and the answer depends on the test your circuit applies: a legal-right test asks whether the party can obtain the documents on demand, while other circuits ask about practical ability. A wholly owned subsidiary&rsquo;s servers are usually within the parent&rsquo;s control under either, which is why the hold has to reach Lyon and the Lyon IT administrator at once. A preservation duty is not suspended by a foreign border."
+  },
+  {
+    num: "2", date: "Stage 2", title: "French counsel gives a different answer",
+    tag: "fr", tagLabel: "The French view",
+    body: "The company retains French counsel in Lyon, who reads the same request through a different legal system. Camille is an employee with her own rights in her mailbox. Before her employer reviews or transfers her data, French and EU data protection law expects a lawful basis, notice to her, and proportionality. French law also treats an employee&rsquo;s private communications as protected even on company equipment. And France has a blocking statute that makes it an offense to gather evidence in France for use in foreign proceedings outside the channels the Hague Evidence Convention provides.",
+    doc: "French counsel&rsquo;s email: &ldquo;I cannot advise you to simply image the Lyon server and send it to Florida. Doing so could expose the company, our managing director personally, and anyone directing the collection. This is not a technicality. In France the right belongs to Mme Laurent, and the state enforces it.&rdquo;",
+    compare: {
+      us: ["Employer typically owns the work email", "Reviewing it is routine", "Failure to produce risks sanctions", "Broad, party-driven discovery is normal"],
+      fr: ["Employee holds privacy and data-protection rights in it", "Review needs lawful basis, notice, proportionality", "Gathering it for a US case can be an offense", "Evidence is traditionally controlled by the judge"]
+    },
+    discuss: "Same email, same employee, same lawyer. Is producing it a duty or a crime? Who is the sovereign for this email, and who created the right Camille holds?",
+    vq: "Can the company simply collect the Lyon mailbox and send it to Tampa?",
+    opts: [
+      { k: "a", t: "Yes" },
+      { k: "b", t: "No" },
+      { k: "c", t: "Only with steps first" }
+    ],
+    teach: "The best answer is not &ldquo;never&rdquo; but &ldquo;not as a routine US collection.&rdquo; Getting from Lyon to Tampa takes planning with French counsel: a defined scope, notice to the employee, a legal basis for the transfer, and often review or filtering in-country. The instructive point for the class is that two lawful-sounding instructions, one from a US judge and one from French law, are each valid in their own territory."
+  },
+  {
+    num: "3", date: "Stage 3", title: "The collision",
+    tag: "warn", tagLabel: "Motion practice",
+    body: "Palmetto Ridge produces its Tampa documents and tells plaintiff it cannot produce the Lyon materials without violating French law. Plaintiff moves to compel. Plaintiff argues that a foreign statute cannot excuse a party from a federal court&rsquo;s discovery order. Defense argues that compelled production would require a crime. At the hearing the judge asks both sides one question: what have you each done so far to reconcile the two regimes?",
+    doc: "Plaintiff&rsquo;s brief: &ldquo;Defendant is a US company that chose to acquire a foreign subsidiary. It may not use its own corporate structure as a shield against discovery.&rdquo;",
+    discuss: "Does the Hague Evidence Convention have to be tried first? What would make the company&rsquo;s position look like good faith, and what would make it look like hiding behind a foreign statute? When did the company first raise the French law, and does that timing matter?",
+    vq: "How should the court treat the French blocking statute?",
+    opts: [
+      { k: "a", t: "As a complete shield" },
+      { k: "b", t: "Ignore it" },
+      { k: "c", t: "Weigh it (comity)" }
+    ],
+    teach: "The Supreme Court&rsquo;s 1987 decision in <em>Soci&eacute;t&eacute; Nationale Industrielle A&eacute;rospatiale</em> held that the Hague Evidence Convention is not the exclusive route and directed courts to a comity analysis. Courts do not treat a blocking statute as an automatic shield, and they do not ignore it. They weigh factors such as how important the evidence is, how specific the request is, where the information originated, whether alternative means exist, and the competing national interests. A party that shows early, documented efforts to reconcile the regimes generally fares better than one that raises foreign law late."
+  },
+  {
+    num: "4", date: "Stage 4", title: "The personal device",
+    tag: "warn", tagLabel: "Beyond the server",
+    body: "Plaintiff&rsquo;s counsel learns that Camille also discussed the promotion with Reeves on a personal messaging app on her own phone. The company has no mobile device management for personal phones and no practical way to reach that data. When asked, Camille refuses to hand over the phone and says that her private messages are her own business.",
+    doc: null,
+    discuss: "Is the phone within the company&rsquo;s control under the test your circuit uses? Does it matter that the messages concern company business? What changes if the company disciplines or dismisses her for refusing? What does Camille&rsquo;s position tell you about who owns the right at stake?",
+    vq: "Is Camille&rsquo;s personal phone within the company&rsquo;s control?",
+    opts: [
+      { k: "a", t: "Yes" },
+      { k: "b", t: "No" },
+      { k: "c", t: "Arguable" }
+    ],
+    teach: "Under a legal-right test the company probably has no right to compel a French employee to surrender a personal device, and French law cuts firmly against trying. Under a practical-ability test the argument is closer. Whatever the answer, the company should not retaliate against her for asserting a right her own government protects. Remind students that the custodian is a person with rights, not just a source of data."
+  },
+  {
+    num: "5", date: "Stage 5", title: "Building a plan that works in both systems",
+    tag: "alert", tagLabel: "Resolution",
+    body: "The judge sets a status conference and tells both sides to come back with a proposal. Your group is Palmetto Ridge&rsquo;s counsel team. Draft the outline of a plan that you could defend before the Tampa judge and in front of a French authority.",
+    doc: "Order: &ldquo;The parties shall confer and submit a joint proposal addressing the identification, preservation, and production of data located in France, including steps taken to comply with applicable foreign law.&rdquo;",
+    discuss: "Which steps reduce risk under both legal systems and which protect you under only one? Think about: the hold, retaining French counsel, mapping what data sits where, a protective order and negotiated protocol, anonymization or in-country review, narrowing the request on proportionality grounds, and documenting every step.",
+    vq: null,
+    opts: null,
+    teach: null
+  }
+];
+
+const verdicts = new Array(stages.length).fill(null);
+let current = 0;
+let showOutcome = false;
+
+function renderPips() {
+  const wrap = document.getElementById('pips');
+  wrap.innerHTML = '';
+  for (let i = 0; i < stages.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < current || (showOutcome && i === current) ? ' done' : i === current ? ' active' : '');
+    wrap.appendChild(d);
+  }
+}
+
+function renderStages() {
+  const container = document.getElementById('stages');
+  container.innerHTML = '';
+
+  for (let i = 0; i <= current; i++) {
+    const s = stages[i];
+    const isDone = i < current || (showOutcome && i === current);
+    const isActive = i === current && !showOutcome;
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+
+    const numIcon = isDone ? '&#10003;' : s.num;
+    const numClass = isDone ? 'done' : 'active';
+    const tagClass = 'tag-' + s.tag;
+
+    let html = '<div class="stage-header">' +
+      '<div class="stage-num ' + numClass + '">' + numIcon + '</div>' +
+      '<div class="stage-title-wrap">' +
+      '<div class="stage-title">' + s.title + '</div>' +
+      '<div class="stage-meta">' + s.date + '</div>' +
+      '</div></div>' +
+      '<span class="tag ' + tagClass + '">' + s.tagLabel + '</span>' +
+      '<div class="stage-body">' + s.body + '</div>';
+
+    if (s.doc) {
+      html += '<div class="doc-block">' + s.doc + '</div>';
+    }
+
+    if (s.compare) {
+      html += '<div class="compare">' +
+        '<div class="col us"><div class="chead">United States</div><ul>' +
+        s.compare.us.map(function (x) { return '<li>' + x + '</li>'; }).join('') +
+        '</ul></div>' +
+        '<div class="col fr"><div class="chead">France</div><ul>' +
+        s.compare.fr.map(function (x) { return '<li>' + x + '</li>'; }).join('') +
+        '</ul></div></div>';
+    }
+
+    html += '<div class="discuss-box">' +
+      '<div class="dlabel">&#x1F4AC; Group discussion</div>' +
+      '<div class="dtext">' + s.discuss + '</div></div>';
+
+    if (s.opts) {
+      const v = verdicts[i];
+      if (isActive) {
+        html += '<div class="verdict-section">' +
+          '<div class="verdict-label">' + s.vq + '</div>' +
+          '<div class="verdict-btns">' +
+          s.opts.map(function (o) {
+            return '<button class="vbtn ' + (v === o.k ? 'sel-' + o.k : '') + '" onclick="setVerdict(' + i + ',\'' + o.k + '\')">' + o.t + '</button>';
+          }).join('') +
+          '</div></div>';
+        if (v !== null) {
+          html += '<div class="teach-note"><div class="tlabel">Instructor note</div>' + s.teach + '</div>';
+        }
+      } else if (isDone && v !== null) {
+        const chosen = s.opts.filter(function (o) { return o.k === v; })[0];
+        html += '<div class="verdict-label">Your group&rsquo;s call: ' + chosen.t + '</div>';
+      }
+    }
+
+    if (isActive) {
+      const isLast = i === stages.length - 1;
+      const btnLabel = isLast ? '&#x1F441; Reveal debrief' : 'Next stage &rarr;';
+      const btnClass = isLast ? 'advance-btn reveal' : 'advance-btn';
+      html += '<button class="' + btnClass + '" onclick="advance()">' + btnLabel + '</button>';
+    }
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  if (showOutcome) {
+    const ocard = document.createElement('div');
+    ocard.className = 'stage-card';
+    ocard.innerHTML =
+      '<div class="outcome-card">' +
+      '<div class="otitle">&#x2696;&#xFE0F; How courts approach this</div>' +
+      '<p>There is no single outcome to reveal, because the point of this exercise is that the answer depends on which sovereign you ask. A US court applies the Federal Rules and a comity analysis. A French authority applies French and EU law, including its blocking statute and data protection rules. Neither is obliged to defer to the other.</p>' +
+      '<p>The parties who fare best are those who treat the conflict as a problem to be managed from the day the request arrives: they issue holds abroad promptly, retain local counsel early, map where data sits, tell the court about the foreign-law issue at the first opportunity rather than at the motion to compel, and negotiate a protocol that gives both legal systems something. Parties who raise foreign law late, or treat it as a trump card, tend to do worst.</p>' +
+      '<p>For Camille, the lesson is that her rights come from France, are enforced by France, and do not vanish because a Florida judge wants her messages.</p>' +
+      '</div>' +
+      '<div class="verify-card"><strong>Instructor verification note.</strong> The description of <em>A&eacute;rospatiale</em>, the French blocking statute, and EU data protection requirements is given at a general level. Confirm current statutory text, any amendments, and recent case law before class; this area moves quickly.</div>' +
+      '<div class="debrief-card">' +
+      '<div class="dlabel">Debrief questions</div>' +
+      '<ol>' +
+      '<li>At which stage did your group first realize there were two answers to the same question?</li>' +
+      '<li>Who created the right that Camille holds, and who could take it away?</li>' +
+      '<li>Why does the American discovery model look unusual from a civil-law country&rsquo;s point of view?</li>' +
+      '<li>What should the company have done before any request arrived to be ready for this?</li>' +
+      '<li>How would your advice change if the custodian were in a country with no data protection law at all?</li>' +
+      '<li>If you were the French managing director, whose instructions would you follow, and why?</li>' +
+      '</ol></div>' +
+      '<button class="restart-btn" onclick="restart()">&#x21BA; Restart from Stage 1</button>';
+    container.appendChild(ocard);
+  }
+
+  renderPips();
+
+  if (current > 0 || showOutcome) {
+    const cards = container.querySelectorAll('.stage-card');
+    const last = cards[cards.length - 1];
+    setTimeout(function () { last.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+  }
+}
+
+function setVerdict(i, v) {
+  verdicts[i] = v;
+  renderStages();
+}
+
+function advance() {
+  if (current < stages.length - 1) {
+    current++;
+  } else {
+    showOutcome = true;
+  }
+  renderStages();
+}
+
+function restart() {
+  current = 0;
+  showOutcome = false;
+  verdicts.fill(null);
+  renderStages();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderStages();
+</script>
+</body>
+</html>
